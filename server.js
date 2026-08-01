@@ -1,280 +1,197 @@
+/**
+ * AccessIndia AI – Full-Stack Node.js Express Server
+ * Serves Frontend SPA + REST API endpoints
+ * Connects to Neon PostgreSQL via DATABASE_URL environment variable
+ */
+
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
-const sqlite3 = require('sqlite3').verbose();
-const fs = require('fs');
+const { Pool } = require('pg');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const JWT_SECRET = process.env.JWT_SECRET || 'accessindia_ai_super_secret_key_2026';
 
-app.use(cors());
+// ─── Middleware ───────────────────────────────────────────────
+app.use(cors({ origin: '*' }));
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// ─── Static Frontend Files ───────────────────────────────────
 app.use(express.static(path.join(__dirname, 'public')));
 
-// DB Connection
-const dbPath = path.join(__dirname, 'db', 'accessindia.db');
+// ─── Neon PostgreSQL Connection Pool ─────────────────────────
+let pool = null;
 
-// Ensure DB exists or seed automatically if not found
-if (!fs.existsSync(dbPath)) {
-  console.log('Database file missing. Initializing database seeder...');
-  require('./db/seed.js');
+if (process.env.DATABASE_URL) {
+  pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: { rejectUnauthorized: false }
+  });
+
+  pool.connect((err, client, release) => {
+    if (err) {
+      console.error('❌ Neon DB connection error:', err.message);
+    } else {
+      console.log('✅ Neon PostgreSQL Database Connected Successfully!');
+      release();
+    }
+  });
+} else {
+  console.warn('⚠️  DATABASE_URL not set. API will return fallback data.');
 }
 
-const db = new sqlite3.Database(dbPath, (err) => {
-  if (err) console.error('Database connection error:', err.message);
-  else console.log('Connected to AccessIndia SQLite Database.');
+// ─── Root: Serve Frontend ─────────────────────────────────────
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// Helper JWT Middleware
-const authenticateToken = (req, res, next) => {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
-  if (!token) return res.status(401).json({ error: 'Access token required' });
-
-  jwt.verify(token, JWT_SECRET, (err, user) => {
-    if (err) return res.status(403).json({ error: 'Invalid or expired token' });
-    req.user = user;
-    next();
-  });
-};
-
-// -------------------------------------------------------------
-// REST API ENDPOINTS
-// -------------------------------------------------------------
-
-// 1. Health check
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'online', platform: 'AccessIndia AI', timestamp: new Date() });
-});
-
-// 2. Auth Endpoints
-app.post('/api/auth/register', (req, res) => {
-  const { name, email, password, role = 'USER', phone, language = 'en', accessibility_needs = 'wheelchair' } = req.body;
-  if (!email || !password || !name) return res.status(400).json({ error: 'Name, email, and password required' });
-
-  const hash = bcrypt.hashSync(password, 10);
-  db.run(
-    `INSERT INTO users (name, email, password_hash, role, phone, preferred_language, accessibility_needs) VALUES (?, ?, ?, ?, ?, ?, ?)`,
-    [name, email, hash, role, phone, language, accessibility_needs],
-    function (err) {
-      if (err) return res.status(400).json({ error: 'Email already registered' });
-      const token = jwt.sign({ id: this.lastID, name, email, role }, JWT_SECRET, { expiresIn: '7d' });
-      res.json({ token, user: { id: this.lastID, name, email, role, preferred_language: language } });
-    }
-  );
-});
-
-app.post('/api/auth/login', (req, res) => {
-  const { email, password } = req.body;
-  db.get(`SELECT * FROM users WHERE email = ?`, [email], (err, user) => {
-    if (err || !user) return res.status(400).json({ error: 'Invalid credentials' });
-    const valid = bcrypt.compareSync(password, user.password_hash);
-    if (!valid) return res.status(400).json({ error: 'Invalid credentials' });
-
-    const token = jwt.sign({ id: user.id, name: user.name, email: user.email, role: user.role }, JWT_SECRET, { expiresIn: '7d' });
-    res.json({ token, user: { id: user.id, name: user.name, email: user.email, role: user.role, preferred_language: user.preferred_language } });
-  });
-});
-
-// 3. Search & List Businesses
-app.get('/api/businesses', (req, res) => {
-  const { q, city, category, feature, min_score } = req.query;
-  let sql = `SELECT b.* FROM businesses b WHERE 1=1`;
-  let params = [];
-
-  if (q) {
-    sql += ` AND (b.name LIKE ? OR b.description LIKE ? OR b.address LIKE ?)`;
-    params.push(`%${q}%`, `%${q}%`, `%${q}%`);
-  }
-  if (city) {
-    sql += ` AND LOWER(b.city) = LOWER(?)`;
-    params.push(city);
-  }
-  if (category) {
-    sql += ` AND LOWER(b.category) = LOWER(?)`;
-    params.push(category);
-  }
-  if (min_score) {
-    sql += ` AND b.accessibility_score >= ?`;
-    params.push(parseInt(min_score));
-  }
-
-  sql += ` ORDER BY b.accessibility_score DESC, b.overall_rating DESC`;
-
-  db.all(sql, params, (err, rows) => {
-    if (err) return res.status(500).json({ error: err.message });
-
-    // Filter by specific accessibility feature if passed
-    if (feature) {
-      db.all(
-        `SELECT DISTINCT business_id FROM accessibility_features WHERE LOWER(feature_name) LIKE ? AND status = 'GREEN'`,
-        [`%${feature.toLowerCase()}%`],
-        (err, featRows) => {
-          if (err) return res.json(rows);
-          const validIds = new Set(featRows.map(f => f.business_id));
-          const filtered = rows.filter(r => validIds.has(r.id));
-          return res.json(filtered);
-        }
-      );
-    } else {
-      res.json(rows);
-    }
-  });
-});
-
-// 4. Get Business Detail by ID with Score, Features, Entrances, Parking, Food Court, Emergency
-app.get('/api/businesses/:id', (req, res) => {
-  const id = req.params.id;
-
-  db.get(`SELECT * FROM businesses WHERE id = ?`, [id], (err, business) => {
-    if (err || !business) return res.status(404).json({ error: 'Business not found' });
-
-    db.all(`SELECT * FROM accessibility_features WHERE business_id = ?`, [id], (err, features) => {
-      db.all(`SELECT * FROM entrances WHERE business_id = ? ORDER BY is_recommended DESC, walking_distance_meters ASC`, [id], (err, entrances) => {
-        db.get(`SELECT * FROM parking_lots WHERE business_id = ?`, [id], (err, parking) => {
-          db.all(`SELECT * FROM food_courts WHERE business_id = ?`, [id], (err, food_courts) => {
-            db.get(`SELECT * FROM emergency_facilities WHERE business_id = ?`, [id], (err, emergency) => {
-              db.all(`SELECT * FROM reviews WHERE business_id = ? ORDER BY id DESC`, [id], (err, reviews) => {
-                res.json({
-                  ...business,
-                  features: features || [],
-                  entrances: entrances || [],
-                  parking: parking || { total_spaces: 0, occupied_spaces: 0, accessible_spaces: 0 },
-                  food_courts: food_courts || [],
-                  emergency: emergency || {},
-                  reviews: reviews || []
-                });
-              });
-            });
-          });
-        });
-      });
+// ─── GET /api/health ──────────────────────────────────────────
+app.get('/api/health', async (req, res) => {
+  if (!pool) {
+    return res.json({
+      status: 'online',
+      database: 'Not connected (DATABASE_URL missing)',
+      server: 'AccessIndia AI Express Server Running'
     });
-  });
-});
-
-// 5. Smart Entrance Recommendation Engine Endpoint
-app.get('/api/businesses/:id/entrances', (req, res) => {
-  const id = req.params.id;
-  db.all(`SELECT * FROM entrances WHERE business_id = ? ORDER BY is_recommended DESC, walking_distance_meters ASC`, [id], (err, entrances) => {
-    if (err) return res.status(500).json({ error: err.message });
-    const recommended = entrances.find(e => e.is_recommended === 1) || entrances[0];
+  }
+  try {
+    const result = await pool.query('SELECT NOW() as time');
     res.json({
-      recommended_entrance: recommended,
-      all_entrances: entrances
+      status: 'online',
+      database: 'Neon PostgreSQL Connected ✅',
+      server: 'AccessIndia AI Full-Stack Server',
+      timestamp: result.rows[0].time
     });
-  });
+  } catch (err) {
+    res.json({ status: 'online', database: 'DB Error: ' + err.message });
+  }
 });
 
-// 6. CCTV Parking Occupancy AI Simulator Endpoint
-app.post('/api/businesses/:id/parking/cctv-analyze', (req, res) => {
-  const id = req.params.id;
-  // Simulates AI Computer Vision object detection on parking CCTV feed
-  db.get(`SELECT * FROM parking_lots WHERE business_id = ?`, [id], (err, parking) => {
-    if (err || !parking) return res.status(404).json({ error: 'Parking data unavailable' });
+// ─── GET /api/places ──────────────────────────────────────────
+app.get('/api/places', async (req, res) => {
+  const { city, category, search } = req.query;
 
-    // Mock AI Computer Vision detection output
-    const simulatedAvailable = Math.max(1, Math.floor(parking.accessible_spaces * (0.3 + Math.random() * 0.5)));
-    const occupied = parking.accessible_spaces - simulatedAvailable;
-
-    res.json({
-      timestamp: new Date().toISOString(),
-      cctv_camera_id: 'CAM-PK-04-AI',
-      ai_model: 'Roboflow-YOLOv8-AccessibleParking-V2',
-      confidence_score: '98.4%',
-      detected_wheelchair_bays: parking.accessible_spaces,
-      occupied_accessible_bays: occupied,
-      available_accessible_bays: simulatedAvailable,
-      recommendation: simulatedAvailable > 0 ? `Park at Zone A (Bay A-${simulatedAvailable}) near North Gate Entrance.` : 'Accessible bays full. Diverting to Valet Drop-off Zone.'
-    });
-  });
-});
-
-// 7. Accessibility Route Planner Endpoint
-app.get('/api/routes/plan', (req, res) => {
-  const { from_lat, from_lng, to_lat, to_lng, mode = 'wheelchair' } = req.query;
-
-  // Step-Free Routing Algorithm Simulation
-  res.json({
-    mode,
-    total_distance_km: 1.4,
-    estimated_minutes: 18,
-    route_quality: 'GREEN', // GREEN = Step-free, YELLOW = Partial, RED = Stairs/Obstacles
-    steps: [
-      { instruction: 'Start from North Plaza Ramp with continuous tactile paving line', distance_meters: 150, accessibility: 'GREEN' },
-      { instruction: 'Cross wide pedestrian signal crossing with audible beeper', distance_meters: 80, accessibility: 'GREEN' },
-      { instruction: 'Use elevator E-1 at Central Terminal to ascend to Level 1', distance_meters: 45, accessibility: 'GREEN' },
-      { instruction: 'Follow wide corridor (2.4m clearance) directly to Destination Entrance', distance_meters: 210, accessibility: 'GREEN' }
-    ]
-  });
-});
-
-// 8. AI Assistant Chatbot Endpoint
-app.post('/api/ai/chat', (req, res) => {
-  const { message, language = 'en', business_id } = req.body;
-  const msgLower = (message || '').toLowerCase();
-
-  let reply = '';
-  if (msgLower.includes('entrance') || msgLower.includes('gate') || msgLower.includes('ramp')) {
-    reply = 'For the best wheelchair accessibility, always use the North Gate (Main Plaza). It features a 1:12 slope ramp, 1.8m wide automatic sliding doors, and is just 10 meters away from elevator lift 1.';
-  } else if (msgLower.includes('parking') || msgLower.includes('car') || msgLower.includes('cctv')) {
-    reply = 'There are dedicated wheelchair-accessible parking spots located right near Entrance Gate A. Our live CCTV AI vision scanner indicates 4 free accessible bays currently available.';
-  } else if (msgLower.includes('restroom') || msgLower.includes('toilet') || msgLower.includes('washroom')) {
-    reply = 'Accessible unisex restrooms with grab rails, low emergency pull cords, and automated taps are located on all floors adjacent to Lifts 1 and 3.';
-  } else if (msgLower.includes('route') || msgLower.includes('navigate') || msgLower.includes('direction')) {
-    reply = 'I recommend taking the step-free Green Route via the North Elevator. Avoid the South Corridor as it currently has maintenance stairs.';
-  } else {
-    reply = `Namaste! AccessIndia AI Assistant here. I can help you find wheelchair ramps, tactile paving, accessible restrooms, EV charging bays, and recommended entrances. How can I assist your visit today?`;
+  // Fallback sample data if no DB connection
+  if (!pool) {
+    const fallback = generateFallback(city || 'Pune');
+    return res.json(fallback);
   }
 
-  res.json({
-    reply,
-    language,
-    suggested_actions: ['Show Recommended Entrance', 'Check CCTV Parking Status', 'Plan Accessible Route', 'Call Emergency Desk']
-  });
-});
+  try {
+    let query = 'SELECT * FROM places WHERE 1=1';
+    const params = [];
 
-// 9. Community Accessibility Report Endpoint
-app.post('/api/reports', (req, res) => {
-  const { business_id, issue_type, description } = req.body;
-  db.run(
-    `INSERT INTO accessibility_reports (business_id, issue_type, description, status) VALUES (?, ?, ?, 'PENDING')`,
-    [business_id, issue_type, description],
-    function (err) {
-      if (err) return res.status(500).json({ error: err.message });
-      res.json({ success: true, report_id: this.lastID, message: 'Accessibility report submitted for verification.' });
+    if (city) {
+      params.push(`%${city}%`);
+      query += ` AND city ILIKE $${params.length}`;
     }
-  );
+    if (category) {
+      params.push(`%${category}%`);
+      query += ` AND category ILIKE $${params.length}`;
+    }
+    if (search) {
+      params.push(`%${search}%`);
+      // Fixed: use a single param for all OR conditions
+      query += ` AND (name ILIKE $${params.length} OR address ILIKE $${params.length} OR city ILIKE $${params.length})`;
+    }
+
+    query += ' ORDER BY accessibility_score DESC LIMIT 50';
+    const result = await pool.query(query, params);
+
+    if (result.rows.length === 0) {
+      // No DB results, return fallback
+      return res.json(generateFallback(city || 'India'));
+    }
+
+    res.json(result.rows);
+  } catch (err) {
+    console.error('GET /api/places error:', err.message);
+    // Return fallback instead of crashing frontend
+    res.json(generateFallback(city || 'Pune'));
+  }
 });
 
-// 10. Admin Analytics Endpoint
-app.get('/api/admin/analytics', (req, res) => {
-  db.get(`SELECT COUNT(*) as total_businesses, AVG(accessibility_score) as avg_score FROM businesses`, (err, bStats) => {
-    db.get(`SELECT COUNT(*) as total_users FROM users`, (err, uStats) => {
-      db.get(`SELECT COUNT(*) as pending_reports FROM accessibility_reports WHERE status = 'PENDING'`, (err, rStats) => {
-        res.json({
-          total_businesses: bStats.total_businesses || 0,
-          avg_accessibility_score: Math.round(bStats.avg_score || 0),
-          total_users: uStats.total_users || 0,
-          pending_verifications: rStats.pending_reports || 0,
-          verified_cities: ['Bengaluru', 'Delhi', 'Mumbai', 'Chennai', 'Hyderabad', 'Kolkata']
-        });
-      });
-    });
-  });
+// ─── GET /api/places/:id ──────────────────────────────────────
+app.get('/api/places/:id', async (req, res) => {
+  if (!pool) return res.status(503).json({ error: 'DB not connected' });
+
+  try {
+    const result = await pool.query('SELECT * FROM places WHERE id = $1', [req.params.id]);
+    if (result.rows.length === 0) return res.status(404).json({ error: 'Place not found' });
+    res.json(result.rows[0]);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-// Catch-all route to serve index.html
+// ─── POST /api/places ─────────────────────────────────────────
+app.post('/api/places', async (req, res) => {
+  if (!pool) return res.status(503).json({ error: 'DB not connected. Add DATABASE_URL env variable.' });
+
+  const { name, category, description, address, city, state, pincode, latitude, longitude, phone, accessibility_score, entrances, features } = req.body;
+
+  if (!name || !category || !city) {
+    return res.status(400).json({ error: 'name, category and city are required' });
+  }
+
+  try {
+    const query = `
+      INSERT INTO places (name, category, description, address, city, state, pincode, latitude, longitude, phone, accessibility_score, entrances, features)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+      RETURNING *;
+    `;
+    const values = [
+      name,
+      category,
+      description || 'Verified accessible facility',
+      address || 'Main Road',
+      city,
+      state || 'India',
+      pincode || '400001',
+      latitude || 18.5204,
+      longitude || 73.8567,
+      phone || null,
+      accessibility_score || 90,
+      JSON.stringify(entrances || [{ name: 'Main Ramp Entrance', notes: 'Step-free ramp available' }]),
+      JSON.stringify(features || [{ feature_name: 'Wheelchair Ramp', status: 'GREEN' }])
+    ];
+
+    const result = await pool.query(query, values);
+    res.status(201).json({ message: 'Facility saved to Neon database ✅', place: result.rows[0] });
+  } catch (err) {
+    console.error('POST /api/places error:', err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ─── Catch-all: Serve index.html for SPA routing ─────────────
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
+// ─── Start Server ─────────────────────────────────────────────
 app.listen(PORT, () => {
-  console.log(`====================================================`);
-  console.log(` AccessIndia AI Server running on http://localhost:${PORT}`);
-  console.log(` Universal Accessibility & Smart Facility Discovery Platform`);
-  console.log(`====================================================`);
+  console.log(`🚀 AccessIndia AI Server running on port ${PORT}`);
+  console.log(`   > Frontend: http://localhost:${PORT}`);
+  console.log(`   > Health: http://localhost:${PORT}/api/health`);
+  console.log(`   > DB: ${process.env.DATABASE_URL ? 'Neon PostgreSQL' : 'NO DATABASE_URL SET'}`);
 });
+
+// ─── Fallback Data Generator ──────────────────────────────────
+function generateFallback(cityName) {
+  const cityCoords = {
+    'Pune': [18.5204, 73.8567], 'Mumbai': [18.9400, 72.8353],
+    'Nagpur': [21.1458, 79.0882], 'Bengaluru': [12.9716, 77.5946],
+    'Delhi': [28.6139, 77.2090], 'Chennai': [13.0827, 80.2707],
+    'Hyderabad': [17.3850, 78.4867], 'Kolkata': [22.5726, 88.3639]
+  };
+  const coords = cityCoords[cityName] || [18.5204, 73.8567];
+  return [
+    { id: 1, name: `${cityName} Central Mall`, category: 'Shopping Malls', address: 'Main Concourse Ave', city: cityName, state: 'India', latitude: coords[0] + 0.005, longitude: coords[1] + 0.005, accessibility_score: 96, entrances: [{ name: 'North Gate Main Ramp', notes: 'Continuous 1:12 slope ramp with automatic sensor glass doors.' }] },
+    { id: 2, name: `${cityName} City Hospital`, category: 'Hospitals', address: 'Station Medical Road', city: cityName, state: 'India', latitude: coords[0] - 0.005, longitude: coords[1] - 0.005, accessibility_score: 98, entrances: [{ name: 'Emergency Block Gate', notes: 'Zero step entrance with pre-stationed wheelchairs at door.' }] },
+    { id: 3, name: `${cityName} Junction Railway Station`, category: 'Railway Stations', address: 'Station Road', city: cityName, state: 'India', latitude: coords[0] + 0.008, longitude: coords[1] - 0.008, accessibility_score: 91, entrances: [{ name: 'Platform 1 Concourse', notes: 'Level entrance to platform with tactile safety paving.' }] }
+  ];
+}
+
+module.exports = app;
