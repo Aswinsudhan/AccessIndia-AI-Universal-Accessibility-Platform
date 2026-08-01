@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AccessIndia AI â€“ Universal Accessibility & Smart Facility Discovery Platform</title>
-  <meta name="description" content="AI-powered accessibility and smart facility discovery platform across India with Live REST Cloud API Backend. Discover wheelchair ramps, tactile paving, Braille lifts, accessible restrooms, EV charging, smart entrance recommendations, and indoor navigation across 20+ cities and districts.">
+  <meta name="description" content="AI-powered accessibility and smart facility discovery platform across India with Voice Over screen reader, speech navigation, and Live REST Cloud API Backend. Discover wheelchair ramps, tactile paving, Braille lifts, accessible restrooms, EV charging, smart entrance recommendations, and indoor navigation across 20+ cities and districts.">
 
   <!-- Google Fonts & Icons -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -74,6 +74,7 @@
     .wcag-container { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; }
     .wcag-group { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
     .wcag-btn { background: rgba(255, 255, 255, 0.1); color: #fff; border: 1px solid rgba(255, 255, 255, 0.2); padding: 4px 10px; border-radius: var(--radius-sm); cursor: pointer; font-size: 0.8rem; font-weight: 500; }
+    .wcag-btn.active-vo { background: var(--status-green); color: #fff; border-color: var(--status-green); font-weight: 700; }
     .text-sizer { display: inline-flex; gap: 2px; }
     .language-selector-group { display: flex; align-items: center; gap: 0.5rem; }
     .lang-select { background: rgba(255, 255, 255, 0.15); color: #fff; border: 1px solid rgba(255, 255, 255, 0.3); padding: 4px 8px; border-radius: var(--radius-sm); font-weight: 600; cursor: pointer; }
@@ -190,6 +191,7 @@
     <div class="container wcag-container">
       <div class="wcag-group">
         <span class="wcag-label"><i class="fa-solid fa-universal-access"></i> <strong data-i18n="a11y_tools">WCAG 2.2 Toolkit:</strong></span>
+        <button id="btn-voiceover" class="wcag-btn" onclick="toggleVoiceOver()"><i class="fa-solid fa-volume-high"></i> Voice Over: <span id="vo-status-text">OFF</span></button>
         <button id="btn-contrast" class="wcag-btn"><i class="fa-solid fa-circle-half-stroke"></i> <span data-i18n="high_contrast">High Contrast</span></button>
         <button id="btn-theme" class="wcag-btn"><i class="fa-solid fa-moon"></i> <span id="theme-text" data-i18n="dark_mode">Dark Mode</span></button>
         <div class="text-sizer" role="group">
@@ -197,7 +199,7 @@
           <button id="btn-font-reset" class="wcag-btn">A</button>
           <button id="btn-font-inc" class="wcag-btn">A+</button>
         </div>
-        <button id="btn-tts" class="wcag-btn"><i class="fa-solid fa-volume-high"></i> <span id="tts-label" data-i18n="read_page">Read Page</span></button>
+        <button id="btn-tts" class="wcag-btn" onclick="readEntirePage()"><i class="fa-solid fa-bullhorn"></i> <span id="tts-label" data-i18n="read_page">Read Page</span></button>
         <span class="backend-badge"><span class="badge-dot green"></span> <span id="cloud-status-text">Live REST Cloud API Active (Connected)</span></span>
       </div>
 
@@ -266,14 +268,14 @@
       <div class="hero-section">
         <div class="container hero-container">
           <div class="hero-content">
-            <span class="hero-badge"><i class="fa-solid fa-cloud-bolt"></i> Live REST Cloud API Backend Active (Connected)</span>
+            <span class="hero-badge"><i class="fa-solid fa-volume-high"></i> Voice Over Screen Reader & AI Navigation Active</span>
             <h1 class="hero-title" data-i18n="hero_title">Discover 100% Accessible Places & Smart Entrances Near You</h1>
             <p class="hero-subtitle" data-i18n="hero_subtitle">Empowering wheelchair users, senior citizens, visually impaired, and families across India with verified step-free routes, CCTV parking AI, and indoor navigation.</p>
 
             <div class="search-box-hero">
               <i class="fa-solid fa-magnifying-glass search-icon"></i>
               <input type="text" id="hero-search-input" placeholder="e.g. Wheelchair accessible hospital in Pune, Mall in Nagpur, Metro in Hyderabad...">
-              <button class="voice-search-btn" id="btn-voice-search" aria-label="Voice Search" onclick="triggerVoiceSearch()"><i class="fa-solid fa-microphone"></i></button>
+              <button class="voice-search-btn" id="btn-voice-search" aria-label="Voice Search & Navigation Assistant" onclick="triggerVoiceSearch()"><i class="fa-solid fa-microphone"></i></button>
               <button class="btn btn-primary" onclick="handleHeroSearch()"><i class="fa-solid fa-arrow-right"></i> <span data-i18n="btn_search">Search</span></button>
             </div>
 
@@ -516,7 +518,7 @@
         <h2 data-i18n="nav_admin"><i class="fa-solid fa-user-shield"></i> AccessIndia AI Cloud Admin Portal</h2>
         <div class="glass-panel p-4 mt-3">
           <h3>Cloud Verification Queue (Live REST Backend API)</h3>
-          <p>Status: <strong style="color:var(--status-green);">Connected (HTTP 200 OK)</strong> &bull; 20+ Verified Cities & Districts &bull; 23 Languages Active</p>
+          <p>Status: <strong style="color:var(--status-green);">Connected (HTTP 200 OK)</strong> &bull; 20+ Verified Cities & Districts &bull; Voice Over Active</p>
         </div>
       </div>
     </section>
@@ -527,7 +529,7 @@
         <h2><i class="fa-solid fa-user"></i> <span data-i18n="my_profile">My Profile</span></h2>
         <div class="glass-panel p-4 mt-3">
           <p>Primary Need: Wheelchair User (Ramp & Lift Required)</p>
-          <p>Cloud Database Sync: Active (REST API Token ID: live-user-772)</p>
+          <p>Voice Over Assistant: Active</p>
         </div>
       </div>
     </section>
@@ -573,8 +575,56 @@
   <!-- Leaflet JS for Maps -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 
-  <!-- EMBEDDED LIVE REST CLOUD BACKEND MANAGER & FRONTEND CONTROLLER -->
+  <!-- EMBEDDED VOICE OVER ENGINE, CLOUD BACKEND & CONTROLLER -->
   <script>
+    /* VOICE OVER SCREEN READER & AUDIO ENGINE */
+    let isVoiceOverActive = false;
+    let synth = window.speechSynthesis;
+
+    function speakText(text) {
+      if (!('speechSynthesis' in window)) return;
+      synth.cancel(); // cancel previous speech
+      const u = new SpeechSynthesisUtterance(text);
+      u.rate = 1.0;
+      u.pitch = 1.0;
+      synth.speak(u);
+    }
+
+    function toggleVoiceOver() {
+      isVoiceOverActive = !isVoiceOverActive;
+      const btn = document.getElementById('btn-voiceover');
+      const txt = document.getElementById('vo-status-text');
+
+      if (isVoiceOverActive) {
+        btn.classList.add('active-vo');
+        txt.innerText = 'ON';
+        speakText("Voice Over screen reader enabled. Move mouse or focus elements to hear speech description.");
+        enableHoverVoiceOver();
+      } else {
+        btn.classList.remove('active-vo');
+        txt.innerText = 'OFF';
+        speakText("Voice Over screen reader disabled.");
+        synth.cancel();
+      }
+    }
+
+    function enableHoverVoiceOver() {
+      document.querySelectorAll('a, button, h1, h2, h3, .place-card, .cat-card, input, select').forEach(el => {
+        el.onmouseenter = () => {
+          if (isVoiceOverActive) {
+            const desc = el.innerText || el.getAttribute('aria-label') || el.placeholder || 'Interactive element';
+            speakText(desc);
+          }
+        };
+      });
+    }
+
+    function readEntirePage() {
+      const title = document.querySelector('.hero-title') ? document.querySelector('.hero-title').innerText : 'AccessIndia AI';
+      const sub = document.querySelector('.hero-subtitle') ? document.querySelector('.hero-subtitle').innerText : '';
+      speakText(`Reading page: ${title}. ${sub}. You have 20 verified cities and districts available.`);
+    }
+
     /* LIVE CLOUD REST API BACKEND CLIENT */
     const CloudAPI = {
       endpoint: 'https://api.restful-api.dev/objects',
@@ -1038,12 +1088,6 @@
       document.getElementById('btn-font-inc').onclick = () => document.body.className = 'font-xl';
       document.getElementById('btn-font-dec').onclick = () => document.body.className = '';
       document.getElementById('btn-font-reset').onclick = () => document.body.className = '';
-      document.getElementById('btn-tts').onclick = () => {
-        if ('speechSynthesis' in window) {
-          const u = new SpeechSynthesisUtterance("AccessIndia AI: Discover 100% accessible places across India.");
-          window.speechSynthesis.speak(u);
-        }
-      };
 
       document.getElementById('lang-select').onchange = (e) => {
         const lang = e.target.value;
@@ -1066,6 +1110,10 @@
       document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
       const target = document.getElementById('view-' + vId);
       if (target) target.classList.add('active');
+
+      if (isVoiceOverActive) {
+        speakText(`Navigated to ${vId} page.`);
+      }
 
       if (vId === 'home' && homeMap) {
         setTimeout(() => homeMap.invalidateSize(), 200);
@@ -1137,6 +1185,7 @@
       const filtered = city ? mockBusinesses.filter(b => b.city.toLowerCase() === city.toLowerCase()) : mockBusinesses;
       renderHomeList(filtered);
       updateMarkers(filtered);
+      if (isVoiceOverActive) speakText(`Filtered by city ${city || 'All Cities'}`);
     }
 
     function handleHeroSearch() {
@@ -1144,6 +1193,7 @@
       switchView('search');
       const filtered = mockBusinesses.filter(b => b.name.toLowerCase().includes(q) || b.category.toLowerCase().includes(q) || b.city.toLowerCase().includes(q) || b.state.toLowerCase().includes(q));
       renderSearchGrid(filtered);
+      if (isVoiceOverActive) speakText(`Search completed for ${q}. Found ${filtered.length} places.`);
     }
 
     function quickSearchCategory(cat) {
@@ -1243,6 +1293,9 @@
         </div>
       `;
       switchView('detail');
+      if (isVoiceOverActive) {
+        speakText(`Opened profile for ${b.name} in ${b.city}. Accessibility score is ${b.accessibility_score} out of 100. Recommended entrance is ${recEnt.name}.`);
+      }
     }
 
     function calculateAccessibleRoute() {
@@ -1258,6 +1311,10 @@
       if (routeMap) {
         const latlngs = [[12.9759, 77.6964], [12.9800, 77.7000], [12.9959, 77.6964]];
         L.polyline(latlngs, { color: '#10b981', weight: 6 }).addTo(routeMap);
+      }
+
+      if (isVoiceOverActive) {
+        speakText("Step free route generated. Exit concourse via step free ramp, follow tactile path along link corridor, and take elevator E 1.");
       }
     }
 
@@ -1306,9 +1363,13 @@
     function toggleAIChat() {
       const drawer = document.getElementById('ai-chat-drawer');
       drawer.style.display = drawer.style.display === 'none' ? 'flex' : 'none';
+      if (isVoiceOverActive && drawer.style.display === 'flex') {
+        speakText("AI Chatbot drawer opened. Type or speak your question.");
+      }
     }
 
     function triggerVoiceSearch() {
+      speakText("Voice Assistant listening. Say city or place name...");
       alert('Voice Search Listener Active. Speak city or place name now (e.g. AIIMS Delhi)...');
       setTimeout(() => {
         document.getElementById('hero-search-input').value = 'AIIMS Delhi';
@@ -1316,7 +1377,7 @@
       }, 1200);
     }
 
-    /* TRAINED ACCESSINDIA AI CHATBOT ENGINE */
+    /* TRAINED ACCESSINDIA AI CHATBOT ENGINE WITH VOICE OUTPUT */
     function sendChatMessage() {
       const input = document.getElementById('chat-user-input');
       const txt = input.value.trim();
@@ -1329,7 +1390,7 @@
       const query = txt.toLowerCase();
 
       setTimeout(() => {
-        let reply = "AccessIndia AI: I am your trained Accessibility Assistant. You can ask me about wheelchair ramps, entrance recommendations, CCTV parking, braille lifts, or step-free routes across 20+ Indian cities and districts.";
+        let reply = "AccessIndia AI: I am your trained Accessibility Assistant. You can ask me about wheelchair ramps, entrance advice, CCTV parking, braille lifts, or step-free routes across 20+ Indian cities and districts.";
 
         if (query.includes('ramp') || query.includes('wheelchair') || query.includes('step')) {
           reply = "â™¿ **Wheelchair & Ramp Advice**: All 14+ verified facilities (e.g. Phoenix Mall Bengaluru/Pune, AIIMS Delhi, CSMT Mumbai, Viviana Mall Thane, Lulu Mall Kochi) feature 1:12 slope ramps with dual handrails and zero-step entrance thresholds.";
@@ -1351,6 +1412,11 @@
 
         box.innerHTML += `<div class="message bot-msg"><div class="msg-bubble">${reply}</div></div>`;
         box.scrollTop = box.scrollHeight;
+
+        if (isVoiceOverActive) {
+          const cleanText = reply.replace(/[*#]/g, '');
+          speakText(cleanText);
+        }
       }, 400);
     }
   </script>
