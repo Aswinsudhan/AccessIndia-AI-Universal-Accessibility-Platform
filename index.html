@@ -271,7 +271,7 @@
             <div class="search-box-hero">
               <i class="fa-solid fa-magnifying-glass search-icon"></i>
               <input type="text" id="hero-search-input" placeholder="e.g. Wheelchair accessible hospital in Pune, Mall in Nagpur, Metro in Hyderabad...">
-              <button class="voice-search-btn" id="btn-voice-search" aria-label="Voice Search"><i class="fa-solid fa-microphone"></i></button>
+              <button class="voice-search-btn" id="btn-voice-search" aria-label="Voice Search" onclick="triggerVoiceSearch()"><i class="fa-solid fa-microphone"></i></button>
               <button class="btn btn-primary" onclick="handleHeroSearch()"><i class="fa-solid fa-arrow-right"></i> <span data-i18n="btn_search">Search</span></button>
             </div>
 
@@ -962,6 +962,7 @@
     };
 
     let homeMap = null;
+    let routeMap = null;
     let mapMarkers = [];
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -1011,6 +1012,14 @@
       document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
       const target = document.getElementById('view-' + vId);
       if (target) target.classList.add('active');
+
+      if (vId === 'home' && homeMap) {
+        setTimeout(() => homeMap.invalidateSize(), 200);
+      }
+      if (vId === 'route') {
+        setTimeout(initRouteMap, 200);
+      }
+
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
@@ -1022,6 +1031,13 @@
       updateMarkers(mockBusinesses);
     }
 
+    function initRouteMap() {
+      const container = document.getElementById('route-map');
+      if (!container || routeMap) return;
+      routeMap = L.map('route-map').setView([12.9759, 77.6964], 12);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(routeMap);
+    }
+
     function updateMarkers(places) {
       if (!homeMap) return;
       mapMarkers.forEach(m => homeMap.removeLayer(m));
@@ -1029,7 +1045,14 @@
       const bounds = L.latLngBounds();
 
       places.forEach(p => {
-        const marker = L.marker([p.latitude, p.longitude]).addTo(homeMap);
+        const color = p.accessibility_score >= 90 ? '#10b981' : '#f59e0b';
+        const customIcon = L.divIcon({
+          className: 'custom-pin',
+          html: `<div style="background:${color}; color:#fff; font-weight:bold; padding:4px 8px; border-radius:12px; font-size:11px; box-shadow:0 2px 6px rgba(0,0,0,0.3); text-align:center;">${p.accessibility_score}</div>`,
+          iconSize: [40, 24]
+        });
+
+        const marker = L.marker([p.latitude, p.longitude], { icon: customIcon }).addTo(homeMap);
         marker.bindPopup(`<b>${p.name}</b><br>${p.category} &bull; ${p.city}<br>Accessibility Score: ${p.accessibility_score}/100<br><button onclick="loadDetail(${p.id})">View Profile</button>`);
         bounds.extend([p.latitude, p.longitude]);
         mapMarkers.push(marker);
@@ -1177,6 +1200,11 @@
         <p>2. Follow Tactile Path along Link Corridor (80m)</p>
         <p>3. Take Elevator E-1 to Destination Entrance (45m)</p>
       `;
+
+      if (routeMap) {
+        const latlngs = [[12.9759, 77.6964], [12.9800, 77.7000], [12.9959, 77.6964]];
+        L.polyline(latlngs, { color: '#10b981', weight: 6 }).addTo(routeMap);
+      }
     }
 
     function switchOwnerTab(tab) {
@@ -1189,6 +1217,14 @@
     function toggleAIChat() {
       const drawer = document.getElementById('ai-chat-drawer');
       drawer.style.display = drawer.style.display === 'none' ? 'flex' : 'none';
+    }
+
+    function triggerVoiceSearch() {
+      alert('Voice Search Listener Active. Speak city or place name now (e.g. AIIMS Delhi)...');
+      setTimeout(() => {
+        document.getElementById('hero-search-input').value = 'AIIMS Delhi';
+        handleHeroSearch();
+      }, 1200);
     }
 
     /* TRAINED ACCESSINDIA AI CHATBOT ENGINE */
