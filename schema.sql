@@ -1,144 +1,93 @@
--- AccessIndia AI – Universal Accessibility & Smart Facility Discovery Platform
--- PostgreSQL Database Schema
+-- AccessIndia AI – Clean Neon PostgreSQL Schema & Seed Data
+-- Run this once in the Neon SQL Console to create tables + seed data
 
-CREATE TABLE IF NOT EXISTS users (
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    email VARCHAR(150) UNIQUE NOT NULL,
-    password_hash VARCHAR(255) NOT NULL,
-    role VARCHAR(30) DEFAULT 'USER', -- USER, BUSINESS_OWNER, ADMIN
-    phone VARCHAR(20),
-    preferred_language VARCHAR(10) DEFAULT 'en',
-    accessibility_needs TEXT[], -- e.g. ARRAY['wheelchair', 'visual', 'senior']
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-);
+-- ─── Drop & Recreate for fresh setup ─────────────────────────
+DROP TABLE IF EXISTS places;
 
-CREATE TABLE IF NOT EXISTS businesses (
+-- ─── Places Table ─────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS places (
     id SERIAL PRIMARY KEY,
-    owner_id INT REFERENCES users(id) ON DELETE SET NULL,
-    name VARCHAR(200) NOT NULL,
-    category VARCHAR(50) NOT NULL, -- Restaurant, Hospital, Mall, Hotel, EV Charging, Petrol Bunk, Railway Station, Airport, Bus Station, Govt Office, School, College, Park, Pharmacy, Bank
+    name VARCHAR(255) NOT NULL,
+    category VARCHAR(100) NOT NULL,
     description TEXT,
     address TEXT NOT NULL,
     city VARCHAR(100) NOT NULL,
     state VARCHAR(100) NOT NULL,
-    pincode VARCHAR(10),
-    latitude NUMERIC(10, 7) NOT NULL,
-    longitude NUMERIC(10, 7) NOT NULL,
-    phone VARCHAR(20),
-    website VARCHAR(255),
-    opening_hours VARCHAR(100),
-    closing_hours VARCHAR(100),
-    overall_rating NUMERIC(3, 2) DEFAULT 0.0,
-    accessibility_score INT DEFAULT 0, -- Calculated 0-100
-    is_verified BOOLEAN DEFAULT FALSE,
+    pincode VARCHAR(20),
+    latitude NUMERIC(10, 6) NOT NULL,
+    longitude NUMERIC(10, 6) NOT NULL,
+    phone VARCHAR(50),
+    opening_hours VARCHAR(50),
+    closing_hours VARCHAR(50),
+    accessibility_score INTEGER DEFAULT 90,
+    entrances JSONB DEFAULT '[]'::jsonb,
+    features JSONB DEFAULT '[]'::jsonb,
+    verified BOOLEAN DEFAULT false,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS accessibility_features (
-    id SERIAL PRIMARY KEY,
-    business_id INT REFERENCES businesses(id) ON DELETE CASCADE,
-    feature_name VARCHAR(100) NOT NULL, -- Wheelchair Ramp, Elevator, Lift, Escalator, Braille Lift Buttons, Voice Guided Lift, Accessible Restroom, Feeding Room, Accessible Parking, Wheelchair Entrance, Automatic Doors, Wide Entrance, Accessible Seating, Drinking Water, First Aid Kit, Medical Room, Ambulance Availability, Tactile Paving, Hearing Loop, Service Animal Friendly, Emergency Exit, Wheelchair Rental
-    status VARCHAR(20) DEFAULT 'GREEN', -- GREEN (Available), ORANGE (Limited/Assisted), RED (Not Available)
-    details TEXT,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT unique_business_feature UNIQUE (business_id, feature_name)
-);
+-- ─── Seed Data – 15 Major Accessible Locations Across India ──
+INSERT INTO places (name, category, description, address, city, state, pincode, latitude, longitude, phone, opening_hours, closing_hours, accessibility_score, entrances, features, verified)
+VALUES 
+('Phoenix Marketcity Mall', 'Shopping Malls', 'Premier shopping center with step-free entrance, tactile paving, and Braille lifts.', 'Whitefield Main Rd', 'Bengaluru', 'Karnataka', '560048', 12.9959, 77.6964, '+91 80 6726 6111', '10:00 AM', '10:00 PM', 96,
+  '[{"name": "North Wing Ramp", "notes": "Wide 1:10 slope ramp with auto-sensor doors"}]',
+  '[{"feature_name": "Wheelchair Ramp", "status": "GREEN"}, {"feature_name": "Accessible Restrooms", "status": "GREEN"}, {"feature_name": "Tactile Paving", "status": "GREEN"}]', true),
 
-CREATE TABLE IF NOT EXISTS entrances (
-    id SERIAL PRIMARY KEY,
-    business_id INT REFERENCES businesses(id) ON DELETE CASCADE,
-    name VARCHAR(100) NOT NULL, -- e.g. North Gate, South Gate, Main Entry
-    is_recommended BOOLEAN DEFAULT FALSE,
-    walking_distance_meters INT DEFAULT 0,
-    has_ramp BOOLEAN DEFAULT FALSE,
-    has_automatic_door BOOLEAN DEFAULT FALSE,
-    lift_distance_meters INT,
-    accessible_parking_nearby BOOLEAN DEFAULT FALSE,
-    accessible_restroom_nearby BOOLEAN DEFAULT FALSE,
-    notes TEXT,
-    latitude NUMERIC(10, 7),
-    longitude NUMERIC(10, 7)
-);
+('AIIMS Hospital', 'Hospitals', 'National premier medical institute with full accessibility infrastructure.', 'Ansari Nagar', 'Delhi', 'Delhi', '110029', 28.5672, 77.2100, '+91 11 2658 8500', '00:00 AM', '11:59 PM', 98,
+  '[{"name": "OPD Emergency Gate", "notes": "Zero step automatic door with pre-positioned wheelchairs"}]',
+  '[{"feature_name": "Wheelchair Ramp", "status": "GREEN"}, {"feature_name": "Accessible Parking", "status": "GREEN"}, {"feature_name": "Sign Language", "status": "GREEN"}]', true),
 
-CREATE TABLE IF NOT EXISTS parking_lots (
-    id SERIAL PRIMARY KEY,
-    business_id INT REFERENCES businesses(id) ON DELETE CASCADE,
-    total_spaces INT DEFAULT 0,
-    occupied_spaces INT DEFAULT 0,
-    accessible_spaces INT DEFAULT 0,
-    parking_fee VARCHAR(50) DEFAULT 'Free',
-    cctv_ai_enabled BOOLEAN DEFAULT TRUE,
-    last_updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-);
+('CSMT Station', 'Railway Stations', 'UNESCO Heritage Railway Terminus upgraded with wheelchair ramps and lifts.', 'Fort', 'Mumbai', 'Maharashtra', '400001', 18.9400, 72.8353, '+91 22 2262 0603', '00:00 AM', '11:59 PM', 88,
+  '[{"name": "Platform 1 Concourse", "notes": "Level access ramp to platforms"}]',
+  '[{"feature_name": "Wheelchair Ramp", "status": "GREEN"}, {"feature_name": "Tactile Paving", "status": "YELLOW"}]', true),
 
-CREATE TABLE IF NOT EXISTS food_courts (
-    id SERIAL PRIMARY KEY,
-    business_id INT REFERENCES businesses(id) ON DELETE CASCADE,
-    restaurant_name VARCHAR(150) NOT NULL,
-    floor_number INT DEFAULT 1,
-    location_description VARCHAR(255),
-    is_wheelchair_accessible BOOLEAN DEFAULT TRUE,
-    walking_distance_meters INT DEFAULT 20
-);
+('Phoenix Marketcity Pune', 'Shopping Malls', 'Premier destination featuring step-free access and Braille lifts.', 'Viman Nagar', 'Pune', 'Maharashtra', '411014', 18.5621, 73.9168, '+91 20 6689 0000', '10:00 AM', '10:00 PM', 95,
+  '[{"name": "Central Atrium Gate", "notes": "Automatic sliding doors, ramp access"}]',
+  '[{"feature_name": "Wheelchair Ramp", "status": "GREEN"}, {"feature_name": "Braille Signage", "status": "GREEN"}]', true),
 
-CREATE TABLE IF NOT EXISTS menu_items (
-    id SERIAL PRIMARY KEY,
-    food_court_id INT REFERENCES food_courts(id) ON DELETE CASCADE,
-    item_name VARCHAR(150) NOT NULL,
-    category VARCHAR(50),
-    price NUMERIC(8, 2),
-    dietary_type VARCHAR(50), -- Veg, Non-Veg, Jain, Vegan
-    is_braille_menu_available BOOLEAN DEFAULT FALSE,
-    is_available BOOLEAN DEFAULT TRUE
-);
+('Empress City Mall', 'Shopping Malls', 'Premier accessible shopping destination in Nagpur District.', 'Cotton Market', 'Nagpur', 'Maharashtra', '440018', 21.1458, 79.0882, '+91 712 663 3333', '10:00 AM', '10:00 PM', 92,
+  '[{"name": "South Entrance", "notes": "Wide ramp with anti-slip surface"}]',
+  '[{"feature_name": "Wheelchair Ramp", "status": "GREEN"}, {"feature_name": "Accessible Restrooms", "status": "YELLOW"}]', true),
 
-CREATE TABLE IF NOT EXISTS emergency_facilities (
-    id SERIAL PRIMARY KEY,
-    business_id INT REFERENCES businesses(id) ON DELETE CASCADE,
-    ambulance_status VARCHAR(50) DEFAULT 'On-Call',
-    medical_room_location VARCHAR(100),
-    security_office_phone VARCHAR(20),
-    police_assistance_phone VARCHAR(20),
-    fire_exit_locations TEXT,
-    first_aid_kit_locations TEXT,
-    emergency_contact VARCHAR(20)
-);
+('Viviana Mall', 'Shopping Malls', 'Award-winning accessible mall in Thane District with tactile paving.', 'Thane West', 'Thane', 'Maharashtra', '400606', 19.2012, 72.9734, '+91 22 6170 1000', '10:00 AM', '11:00 PM', 97,
+  '[{"name": "West Wing Entrance", "notes": "Level ground entrance, no steps"}]',
+  '[{"feature_name": "Wheelchair Ramp", "status": "GREEN"}, {"feature_name": "Tactile Paving", "status": "GREEN"}, {"feature_name": "Accessible Parking", "status": "GREEN"}]', true),
 
-CREATE TABLE IF NOT EXISTS reviews (
-    id SERIAL PRIMARY KEY,
-    business_id INT REFERENCES businesses(id) ON DELETE CASCADE,
-    user_id INT REFERENCES users(id) ON DELETE SET NULL,
-    user_name VARCHAR(100),
-    rating INT CHECK (rating >= 1 AND rating <= 5),
-    accessibility_rating INT CHECK (accessibility_rating >= 1 AND accessibility_rating <= 5),
-    comment TEXT,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-);
+('Express Avenue Mall', 'Shopping Malls', 'Premier accessible shopping mall in Chennai.', 'Royapettah', 'Chennai', 'Tamil Nadu', '600014', 13.0587, 80.2641, '+91 44 2846 4444', '10:00 AM', '10:00 PM', 94,
+  '[{"name": "Main Plaza Gate", "notes": "Wide automatic door with ramp"}]',
+  '[{"feature_name": "Wheelchair Ramp", "status": "GREEN"}]', true),
 
-CREATE TABLE IF NOT EXISTS photos (
-    id SERIAL PRIMARY KEY,
-    business_id INT REFERENCES businesses(id) ON DELETE CASCADE,
-    url TEXT NOT NULL,
-    caption VARCHAR(255),
-    is_accessibility_focused BOOLEAN DEFAULT FALSE,
-    uploaded_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-);
+('HITEC City Metro', 'Railway Stations', 'Modern elevated metro hub in Hyderabad equipped with wide lifts.', 'Madhapur', 'Hyderabad', 'Telangana', '500081', 17.4474, 78.3762, '+91 40 2333 1111', '06:00 AM', '11:00 PM', 95,
+  '[{"name": "Metro Concourse Lift", "notes": "1.5m x 2m lift to all platforms, audio announcement"}]',
+  '[{"feature_name": "Elevator/Lift", "status": "GREEN"}, {"feature_name": "Tactile Paving", "status": "GREEN"}]', true),
 
-CREATE TABLE IF NOT EXISTS accessibility_reports (
-    id SERIAL PRIMARY KEY,
-    business_id INT REFERENCES businesses(id) ON DELETE CASCADE,
-    user_id INT REFERENCES users(id) ON DELETE SET NULL,
-    issue_type VARCHAR(100) NOT NULL,
-    description TEXT NOT NULL,
-    status VARCHAR(30) DEFAULT 'PENDING', -- PENDING, VERIFIED, RESOLVED, REJECTED
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-);
+('Science City', 'Parks', 'Large interactive science center equipped with wheelchair ramps.', 'Mirania Gardens', 'Kolkata', 'West Bengal', '700046', 22.5414, 88.3962, '+91 33 2285 4343', '09:00 AM', '08:00 PM', 91,
+  '[{"name": "Main Plaza Entrance", "notes": "Pathway with ramps, no stairs"}]',
+  '[{"feature_name": "Wheelchair Ramp", "status": "GREEN"}, {"feature_name": "Accessible Restrooms", "status": "GREEN"}]', true),
 
-CREATE TABLE IF NOT EXISTS languages (
-    id SERIAL PRIMARY KEY,
-    code VARCHAR(10) UNIQUE NOT NULL,
-    name VARCHAR(50) NOT NULL,
-    native_name VARCHAR(50) NOT NULL,
-    is_supported BOOLEAN DEFAULT TRUE
-);
+('Alpha One Mall', 'Shopping Malls', 'Vast shopping center with wide corridors and audio elevators.', 'Vastrapur', 'Ahmedabad', 'Gujarat', '380015', 23.0396, 72.5308, '+91 79 4019 1111', '10:00 AM', '10:00 PM', 93,
+  '[{"name": "East Parking Gate", "notes": "Zero step access from parking level"}]',
+  '[{"feature_name": "Wheelchair Ramp", "status": "GREEN"}, {"feature_name": "Elevator/Lift", "status": "GREEN"}]', true),
+
+('SMS Hospital', 'Hospitals', 'Major multi-specialty hospital with ramp access across OPD blocks.', 'C Scheme', 'Jaipur', 'Rajasthan', '302004', 26.8978, 75.8153, '+91 141 256 0291', '00:00 AM', '11:59 PM', 90,
+  '[{"name": "OPD Block Ramp", "notes": "Concrete ramp with side railings"}]',
+  '[{"feature_name": "Wheelchair Ramp", "status": "GREEN"}, {"feature_name": "Accessible Parking", "status": "YELLOW"}]', true),
+
+('Lulu Mall Kochi', 'Shopping Malls', 'Largest shopping mall in Kerala with full wheelchair accessibility.', 'Edappally', 'Kochi', 'Kerala', '682024', 10.0270, 76.3080, '+91 484 272 7777', '09:00 AM', '11:00 PM', 98,
+  '[{"name": "Grand Atrium Gate", "notes": "Smooth ramp with sensor doors, step-free from parking"}]',
+  '[{"feature_name": "Wheelchair Ramp", "status": "GREEN"}, {"feature_name": "Braille Signage", "status": "GREEN"}, {"feature_name": "Tactile Paving", "status": "GREEN"}]', true),
+
+('City Centre Mall Nashik', 'Shopping Malls', 'Accessible mall in Nashik with step-free elevators.', 'Untwadi', 'Nashik', 'Maharashtra', '422002', 20.0003, 73.7712, '+91 253 235 6666', '10:00 AM', '10:00 PM', 91,
+  '[{"name": "Main Gate", "notes": "Level entrance from road side"}]',
+  '[{"feature_name": "Wheelchair Ramp", "status": "GREEN"}]', true),
+
+('Pune Airport', 'Airports', 'Lohegaon Airport with full international accessibility standards.', 'Lohegaon', 'Pune', 'Maharashtra', '411032', 18.5822, 73.9197, '+91 20 2668 1100', '00:00 AM', '11:59 PM', 97,
+  '[{"name": "Departures Ground Level", "notes": "Full level access with porter wheelchairs available"}]',
+  '[{"feature_name": "Wheelchair Ramp", "status": "GREEN"}, {"feature_name": "Accessible Restrooms", "status": "GREEN"}, {"feature_name": "Accessible Parking", "status": "GREEN"}]', true),
+
+('Nagpur Airport', 'Airports', 'Dr. Babasaheb Ambedkar International Airport with modern accessibility.', 'Sonegaon', 'Nagpur', 'Maharashtra', '440005', 21.0922, 79.0472, '+91 712 222 4624', '00:00 AM', '11:59 PM', 95,
+  '[{"name": "Terminal 1 Main Entrance", "notes": "Level entry with accessibility assistance desk inside"}]',
+  '[{"feature_name": "Wheelchair Ramp", "status": "GREEN"}, {"feature_name": "Elevator/Lift", "status": "GREEN"}]', true);
+
+-- Verify
+SELECT COUNT(*) as total_places FROM places;
