@@ -86,6 +86,29 @@ window.API_BASE_URL = 'https://YOUR-ORACLE-BACKEND-URL';
 - Make sure CORS remains enabled for the Cloudflare Pages domain.
 - The frontend now calls the backend through `API_BASE_URL`, so the same code can run locally and on Cloudflare Pages.
 
+### Oracle Cloud Deployment Steps
+1. Create an Oracle Cloud Always Free VM and open ports `22` and `3000`.
+2. Install Node.js 18+ and Git on the VM.
+3. Clone this repository on the VM.
+4. Run `npm install`.
+5. Set environment variables:
+```bash
+PORT=3000
+DATABASE_URL=your_neon_connection_string
+```
+6. Start the server with `npm start` or use a process manager like `pm2`.
+7. Test `https://your-oracle-host/api/health` before connecting the frontend.
+
+### Cloudflare Pages Deployment Steps
+1. Connect the GitHub repository to Cloudflare Pages.
+2. Choose the repository root as the build output because this is a static site.
+3. Do not add a frontend build command unless you introduce one later.
+4. After Oracle is live, update `config.js` to your Oracle backend URL:
+```js
+window.API_BASE_URL = 'https://your-oracle-host';
+```
+5. Redeploy Cloudflare Pages and verify the search, chatbot, route planner, and admin API calls.
+
 ---
 
 ## 📊 Database Schemas
