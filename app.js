@@ -257,53 +257,24 @@ document.addEventListener('DOMContentLoaded', () => {
 // WCAG 2.2 TOOLBAR CONTROLLER
 // -------------------------------------------------------------
 function setupWCAGToolbar() {
-  document.getElementById('btn-contrast').addEventListener('click', () => {
-    state.contrast = state.contrast === 'normal' ? 'high' : 'normal';
-    document.documentElement.setAttribute('data-contrast', state.contrast);
-    announceAccessibility(`High Contrast mode ${state.contrast === 'high' ? 'enabled' : 'disabled'}`);
-  });
+  const contrastBtn = document.getElementById('btn-contrast');
+  if (contrastBtn) {
+    contrastBtn.addEventListener('click', () => {
+      state.contrast = state.contrast === 'normal' ? 'high' : 'normal';
+      document.documentElement.setAttribute('data-contrast', state.contrast);
+      contrastBtn.classList.toggle('active-mode', state.contrast === 'high');
+      announceAccessibility(`High Contrast mode ${state.contrast === 'high' ? 'enabled' : 'disabled'}`);
+    });
+  }
 
-  document.getElementById('btn-theme').addEventListener('click', () => {
-    state.theme = state.theme === 'light' ? 'dark' : 'light';
-    document.documentElement.setAttribute('data-theme', state.theme);
-    document.getElementById('theme-text').innerText = state.theme === 'dark' ? 'Light Mode' : 'Dark Mode';
-    announceAccessibility(`Switched to ${state.theme} theme`);
-  });
-
-  document.getElementById('btn-font-inc').addEventListener('click', () => {
-    document.body.classList.remove('font-lg');
-    document.body.classList.add('font-xl');
-    announceAccessibility('Font size set to extra large');
-  });
-
-  document.getElementById('btn-font-dec').addEventListener('click', () => {
-    document.body.classList.remove('font-lg', 'font-xl');
-    announceAccessibility('Font size set to default');
-  });
-
-  document.getElementById('btn-font-reset').addEventListener('click', () => {
-    document.body.classList.remove('font-lg', 'font-xl');
-    announceAccessibility('Font size reset');
-  });
-
-  document.getElementById('btn-tts').addEventListener('click', () => {
-    if ('speechSynthesis' in window) {
-      const activeViewText = document.querySelector('.app-view.active').innerText.substring(0, 300);
-      const utterance = new SpeechSynthesisUtterance("AccessIndia AI Reading Page: " + activeViewText);
-      window.speechSynthesis.speak(utterance);
-      announceAccessibility('Reading page content out loud');
-    } else {
-      alert('Text-to-speech is not supported by your browser.');
-    }
-  });
-
-  document.getElementById('btn-motion').addEventListener('click', function () {
-    state.reducedMotion = !state.reducedMotion;
-    this.innerText = state.reducedMotion ? 'Motion: Reduced' : 'Motion: Normal';
-    announceAccessibility(`Reduced motion mode ${state.reducedMotion ? 'activated' : 'deactivated'}`);
-  });
-
-  document.getElementById('btn-voice-search').addEventListener('click', triggerVoiceSearch);
+  const themeBtn = document.getElementById('btn-theme');
+  if (themeBtn) {
+    themeBtn.addEventListener('click', () => {
+      state.theme = state.theme === 'light' ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', state.theme);
+      announceAccessibility(`Switched to ${state.theme} theme`);
+    });
+  }
 }
 
 function announceAccessibility(message) {
