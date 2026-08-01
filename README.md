@@ -74,6 +74,13 @@ docker-compose up --build
 - Backend: Oracle Cloud Always Free VM
 - Database: Neon PostgreSQL
 
+### Recommended Full-App Hosting Option
+- Frontend: Koyeb
+- Backend: Koyeb
+- Database: Neon PostgreSQL
+
+Koyeb is a better fit if you want one host for the complete app because `server.js` already serves the frontend and API together.
+
 ### Frontend Configuration
 Before deploying the static site, update `config.js` with your backend URL:
 ```js
@@ -108,6 +115,20 @@ DATABASE_URL=your_neon_connection_string
 window.API_BASE_URL = 'https://your-oracle-host';
 ```
 5. Redeploy Cloudflare Pages and verify the search, chatbot, route planner, and admin API calls.
+
+### Koyeb Deployment Steps
+1. Create a Koyeb app from this GitHub repository.
+2. Choose the Node.js service type or Docker deployment.
+3. Set the run command to `npm start`.
+4. Add environment variables:
+```bash
+PORT=3000
+DATABASE_URL=your_neon_connection_string
+NODE_ENV=production
+```
+5. Make sure Koyeb exposes the service on the public web.
+6. Test `https://your-koyeb-app/api/health` and the root page.
+7. Because the frontend and backend share the same host on Koyeb, `config.js` can stay as `window.API_BASE_URL = ''`.
 
 ---
 
