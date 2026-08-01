@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  accessindia-app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - JWT_SECRET=accessindia_ai_super_secret_key_2026
+      - DATABASE_URL=postgres://accessuser:accesspass@postgres-db:5432/accessindiadb
+    depends_on:
+      - postgres-db
+    restart: always
+
+  postgres-db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: accessuser
+      POSTGRES_PASSWORD: accesspass
+      POSTGRES_DB: accessindiadb
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+
+volumes:
+  pgdata:
