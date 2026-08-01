@@ -128,8 +128,8 @@
     .sidebar-title-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
     .places-card-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 1rem; }
 
-    .place-card { padding: 1.25rem; border-radius: var(--radius-md); cursor: pointer; }
-    .place-card:hover { border-color: var(--primary-color); }
+    .place-card { padding: 1.25rem; border-radius: var(--radius-md); cursor: pointer; transition: all 0.2s ease; }
+    .place-card:hover { border-color: var(--primary-color); transform: translateY(-2px); }
     .place-card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem; }
     .score-badge { padding: 4px 10px; border-radius: 20px; font-weight: 800; font-size: 0.85rem; }
     .score-badge.green { background: var(--status-green-bg); color: var(--status-green); }
@@ -199,14 +199,14 @@
     <div class="container wcag-container">
       <div class="wcag-group">
         <span class="wcag-label"><i class="fa-solid fa-universal-access" aria-hidden="true"></i> <strong data-i18n="a11y_tools">WCAG 2.2 Toolkit:</strong></span>
-        <button id="btn-contrast" class="wcag-btn" aria-label="Toggle High Contrast Mode"><i class="fa-solid fa-circle-half-stroke"></i> High Contrast</button>
-        <button id="btn-theme" class="wcag-btn" aria-label="Toggle Dark Mode"><i class="fa-solid fa-moon"></i> <span id="theme-text">Dark Mode</span></button>
+        <button id="btn-contrast" class="wcag-btn" aria-label="Toggle High Contrast Mode"><i class="fa-solid fa-circle-half-stroke"></i> <span data-i18n="high_contrast">High Contrast</span></button>
+        <button id="btn-theme" class="wcag-btn" aria-label="Toggle Dark Mode"><i class="fa-solid fa-moon"></i> <span id="theme-text" data-i18n="dark_mode">Dark Mode</span></button>
         <div class="text-sizer" role="group">
           <button id="btn-font-dec" class="wcag-btn">A-</button>
           <button id="btn-font-reset" class="wcag-btn">A</button>
           <button id="btn-font-inc" class="wcag-btn">A+</button>
         </div>
-        <button id="btn-tts" class="wcag-btn"><i class="fa-solid fa-volume-high"></i> <span id="tts-label">Read Page</span></button>
+        <button id="btn-tts" class="wcag-btn"><i class="fa-solid fa-volume-high"></i> <span id="tts-label" data-i18n="read_page">Read Page</span></button>
         <button id="btn-motion" class="wcag-btn"><i class="fa-solid fa-person-walking"></i> Motion: Normal</button>
       </div>
 
@@ -215,11 +215,11 @@
         <select id="lang-select" class="lang-select" aria-label="Select Language (23 Indian Languages)">
           <option value="en" selected>English</option>
           <option value="hi">à¤¹à¤¿à¤‚à¤¦à¥€ (Hindi)</option>
+          <option value="mr">à¤®à¤°à¤¾à¤ à¥€ (Marathi)</option>
           <option value="ta">à®¤à®®à®¿à®´à¯ (Tamil)</option>
           <option value="te">à°¤à±†à°²à±à°—à± (Telugu)</option>
           <option value="kn">à²•à²¨à³à²¨à²¡ (Kannada)</option>
           <option value="ml">à´®à´²à´¯à´¾à´³à´‚ (Malayalam)</option>
-          <option value="mr">à¤®à¤°à¤¾à¤ à¥€ (Marathi)</option>
           <option value="gu">àª—à«àªœàª°àª¾àª¤à«€ (Gujarati)</option>
           <option value="pa">à¨ªà©°à¨œà¨¾à¨¬à©€ (Punjabi)</option>
           <option value="bn">à¦¬à¦¾à¦‚à¦²à¦¾ (Bengali)</option>
@@ -231,10 +231,10 @@
           <option value="doi">à¤¡à¥‹à¤—à¤°à¥€ (Dogri)</option>
           <option value="sd">à¤¸à¤¿à¤¨à¥à¤§à¥€ (Sindhi)</option>
           <option value="mai">à¤®à¥ˆà¤¥à¤¿à¤²à¥€ (Maithili)</option>
-          <option value="sat">à¤¸à¤‚à¤¥à¤¾à¤²à¥€ (Santali)</option>
+          <option value="sat">à¦¸à¦‚à¦¥à¦¾à¦²à§€ (Santali)</option>
           <option value="mni">à¦®à§ˆà¦¤à§ˆà¦²à§‹à¦¨à§ (Manipuri)</option>
           <option value="brx">à¤¬à¤¡à¤¼à¥‹ (Bodo)</option>
-          <option value="ks">à¤•à¤¶à¥à¤®à¥€à¤°à¥€ (Kashmiri)</option>
+          <option value="ks">Ú©Ø£Ø´ÙØ± (Kashmiri)</option>
           <option value="sa">à¤¸à¤‚à¤¸à¥à¤•à¥ƒà¤¤à¤®à¥ (Sanskrit)</option>
         </select>
       </div>
@@ -248,7 +248,7 @@
         <div class="logo-icon"><i class="fa-solid fa-wheelchair-move"></i></div>
         <div class="logo-text">
           <span class="brand-name">AccessIndia <span class="brand-ai">AI</span></span>
-          <span class="brand-tagline">Universal Accessibility Platform</span>
+          <span class="brand-tagline" data-i18n="platform_tagline">Universal Accessibility Platform</span>
         </div>
       </a>
 
@@ -287,12 +287,12 @@
             </div>
 
             <div class="hero-tags">
-              <span class="tag-label">Popular Searches:</span>
-              <button class="chip-tag" onclick="quickSearchCategory('Hospitals')"><i class="fa-solid fa-hospital"></i> Hospitals</button>
-              <button class="chip-tag" onclick="quickSearchCategory('Shopping Malls')"><i class="fa-solid fa-bag-shopping"></i> Shopping Malls</button>
-              <button class="chip-tag" onclick="quickSearchCategory('Restaurants')"><i class="fa-solid fa-utensils"></i> Restaurants</button>
-              <button class="chip-tag" onclick="quickSearchCategory('EV Charging Stations')"><i class="fa-solid fa-charging-station"></i> EV Charging</button>
-              <button class="chip-tag" onclick="quickSearchCategory('Railway Stations')"><i class="fa-solid fa-train"></i> Railway Stations</button>
+              <span class="tag-label" data-i18n="popular_searches">Popular Searches:</span>
+              <button class="chip-tag" onclick="quickSearchCategory('Hospitals')"><i class="fa-solid fa-hospital"></i> <span data-i18n="cat_hospitals">Hospitals</span></button>
+              <button class="chip-tag" onclick="quickSearchCategory('Shopping Malls')"><i class="fa-solid fa-bag-shopping"></i> <span data-i18n="cat_malls">Shopping Malls</span></button>
+              <button class="chip-tag" onclick="quickSearchCategory('Restaurants')"><i class="fa-solid fa-utensils"></i> <span data-i18n="cat_restaurants">Restaurants</span></button>
+              <button class="chip-tag" onclick="quickSearchCategory('EV Charging Stations')"><i class="fa-solid fa-charging-station"></i> <span data-i18n="cat_ev">EV Charging</span></button>
+              <button class="chip-tag" onclick="quickSearchCategory('Railway Stations')"><i class="fa-solid fa-train"></i> <span data-i18n="cat_railway">Railway Stations</span></button>
             </div>
           </div>
         </div>
@@ -302,10 +302,10 @@
         <div class="discovery-header">
           <div>
             <h2 class="section-title"><i class="fa-solid fa-map-location-dot"></i> <span data-i18n="interactive_map">Interactive Accessibility Map & Facility Finder</span></h2>
-            <p class="section-desc">Real-time status indicators (Green: Fully Accessible, Orange: Assisted, Red: Limited)</p>
+            <p class="section-desc" data-i18n="map_desc">Real-time status indicators (Green: Fully Accessible, Orange: Assisted, Red: Limited)</p>
           </div>
           <div class="city-selector">
-            <label for="city-filter-home"><i class="fa-solid fa-city"></i> City:</label>
+            <label for="city-filter-home"><i class="fa-solid fa-city"></i> <span data-i18n="label_city">City:</span></label>
             <select id="city-filter-home" onchange="filterHomeCity(this.value)">
               <option value="">All Metros (India)</option>
               <option value="Bengaluru">Bengaluru</option>
@@ -314,6 +314,12 @@
               <option value="Chennai">Chennai</option>
               <option value="Hyderabad">Hyderabad</option>
               <option value="Kolkata">Kolkata</option>
+              <option value="Pune">Pune</option>
+              <option value="Ahmedabad">Ahmedabad</option>
+              <option value="Jaipur">Jaipur</option>
+              <option value="Lucknow">Lucknow</option>
+              <option value="Chandigarh">Chandigarh</option>
+              <option value="Kochi">Kochi</option>
             </select>
           </div>
         </div>
@@ -329,8 +335,8 @@
 
           <div class="places-sidebar">
             <div class="sidebar-title-bar">
-              <h3><i class="fa-solid fa-compass"></i> Verified Nearby Places (<span id="places-count">0</span>)</h3>
-              <button class="btn btn-sm btn-outline" onclick="switchView('search')">View All</button>
+              <h3><i class="fa-solid fa-compass"></i> <span data-i18n="verified_places">Verified Nearby Places</span> (<span id="places-count">0</span>)</h3>
+              <button class="btn btn-sm btn-outline" onclick="switchView('search')" data-i18n="view_all">View All</button>
             </div>
             <div id="home-places-list" class="places-card-list"></div>
           </div>
@@ -341,18 +347,18 @@
         <div class="grid grid-3">
           <div class="feature-spotlight-card glass-panel">
             <div class="spotlight-icon"><i class="fa-solid fa-door-open"></i></div>
-            <h3>Smart Entrance Recommendation</h3>
-            <p>Calculates ramp slope, door clearance, and walking distance to direct you to the optimal entrance gate.</p>
+            <h3 data-i18n="spotlight_entrance_title">Smart Entrance Recommendation</h3>
+            <p data-i18n="spotlight_entrance_desc">Calculates ramp slope, door clearance, and walking distance to direct you to the optimal entrance gate.</p>
           </div>
           <div class="feature-spotlight-card glass-panel">
             <div class="spotlight-icon"><i class="fa-solid fa-video"></i></div>
-            <h3>CCTV Parking AI Occupancy</h3>
-            <p>Analyzes live CCTV feeds to show real-time accessible parking spot availability.</p>
+            <h3 data-i18n="spotlight_cctv_title">CCTV Parking AI Occupancy</h3>
+            <p data-i18n="spotlight_cctv_desc">Analyzes live CCTV feeds to show real-time accessible parking spot availability.</p>
           </div>
           <div class="feature-spotlight-card glass-panel">
             <div class="spotlight-icon"><i class="fa-solid fa-route"></i></div>
-            <h3>Indoor Navigation</h3>
-            <p>Navigate multi-level facilities from parking to elevators and braille rest rooms.</p>
+            <h3 data-i18n="spotlight_indoor_title">Indoor Navigation</h3>
+            <p data-i18n="spotlight_indoor_desc">Navigate multi-level facilities from parking to elevators and braille rest rooms.</p>
           </div>
         </div>
       </div>
@@ -361,7 +367,7 @@
     <!-- VIEW 2: CATEGORIES PAGE -->
     <section id="view-categories" class="app-view">
       <div class="container">
-        <h2><i class="fa-solid fa-layer-group"></i> Explore Accessibility by Category</h2>
+        <h2 data-i18n="nav_categories"><i class="fa-solid fa-layer-group"></i> Explore Accessibility by Category</h2>
         <div id="categories-grid" class="categories-grid"></div>
       </div>
     </section>
@@ -369,31 +375,44 @@
     <!-- VIEW 3: SEARCH PAGE -->
     <section id="view-search" class="app-view">
       <div class="container">
-        <h2><i class="fa-solid fa-filter"></i> Advanced Accessibility Search</h2>
+        <h2><i class="fa-solid fa-filter"></i> <span data-i18n="adv_search_title">Advanced Accessibility Search</span></h2>
         <div class="search-page-layout">
           <aside class="filter-panel glass-panel">
-            <h3>Filter Criteria</h3>
+            <h3 data-i18n="filter_criteria">Filter Criteria</h3>
             <div style="margin: 1rem 0;">
-              <label>City</label>
-              <select id="filter-city" class="input-control">
+              <label data-i18n="label_city">City</label>
+              <select id="filter-city" class="input-control" onchange="applyAdvancedFilters()">
                 <option value="">All Cities</option>
                 <option value="Bengaluru">Bengaluru</option>
                 <option value="Delhi">Delhi</option>
                 <option value="Mumbai">Mumbai</option>
                 <option value="Chennai">Chennai</option>
+                <option value="Hyderabad">Hyderabad</option>
+                <option value="Kolkata">Kolkata</option>
+                <option value="Pune">Pune</option>
+                <option value="Ahmedabad">Ahmedabad</option>
+                <option value="Jaipur">Jaipur</option>
+                <option value="Lucknow">Lucknow</option>
+                <option value="Chandigarh">Chandigarh</option>
+                <option value="Kochi">Kochi</option>
               </select>
             </div>
             <div style="margin-bottom: 1rem;">
-              <label>Category</label>
-              <select id="filter-category" class="input-control">
+              <label data-i18n="nav_categories">Category</label>
+              <select id="filter-category" class="input-control" onchange="applyAdvancedFilters()">
                 <option value="">All Categories</option>
                 <option value="Restaurants">Restaurants</option>
                 <option value="Shopping Malls">Shopping Malls</option>
                 <option value="Hospitals">Hospitals</option>
                 <option value="Airports">Airports</option>
+                <option value="Railway Stations">Railway Stations</option>
+                <option value="Parks">Parks</option>
+                <option value="Banks">Banks</option>
+                <option value="Pharmacies">Pharmacies</option>
               </select>
             </div>
-            <button class="btn btn-primary btn-block" onclick="applyAdvancedFilters()">Apply Filters</button>
+            <button class="btn btn-primary btn-block" onclick="applyAdvancedFilters()" data-i18n="btn_apply">Apply Filters</button>
+            <button class="btn btn-outline btn-block mt-2" onclick="resetAdvancedFilters()" data-i18n="btn_reset">Reset Filters</button>
           </aside>
           <main class="results-panel">
             <div id="results-summary">Showing places</div>
@@ -406,7 +425,7 @@
     <!-- VIEW 4: DETAIL PAGE -->
     <section id="view-detail" class="app-view">
       <div class="container">
-        <button class="btn btn-outline mb-3" onclick="switchView('home')"><i class="fa-solid fa-arrow-left"></i> Back</button>
+        <button class="btn btn-outline mb-3" onclick="switchView('home')"><i class="fa-solid fa-arrow-left"></i> <span data-i18n="btn_back">Back</span></button>
         <div id="detail-content" class="detail-container"></div>
       </div>
     </section>
@@ -414,7 +433,7 @@
     <!-- VIEW 5: ROUTE PLANNER -->
     <section id="view-route" class="app-view">
       <div class="container">
-        <h2><i class="fa-solid fa-route"></i> Step-Free Accessibility Route Planner</h2>
+        <h2><i class="fa-solid fa-route"></i> <span data-i18n="route_planner_title">Step-Free Accessibility Route Planner</span></h2>
         <div class="route-planner-layout">
           <div class="glass-panel p-4">
             <div style="margin-bottom:1rem;">
@@ -426,9 +445,11 @@
               <select id="route-to" class="input-control">
                 <option value="1">Phoenix Marketcity Mall (Bengaluru)</option>
                 <option value="2">AIIMS Hospital (Delhi)</option>
+                <option value="4">CSMT Railway Station (Mumbai)</option>
+                <option value="7">Express Mall (Pune)</option>
               </select>
             </div>
-            <button class="btn btn-primary btn-block" onclick="calculateAccessibleRoute()">Calculate Route</button>
+            <button class="btn btn-primary btn-block" onclick="calculateAccessibleRoute()" data-i18n="btn_calc_route">Calculate Step-Free Route</button>
             <div id="route-summary-box" style="display:none; margin-top:1rem;" class="p-3 glass-panel"></div>
           </div>
           <div class="map-card glass-panel">
@@ -441,7 +462,7 @@
     <!-- VIEW 6: BUSINESS PORTAL -->
     <section id="view-owner" class="app-view">
       <div class="container">
-        <h2><i class="fa-solid fa-store"></i> Business Owner Portal</h2>
+        <h2 data-i18n="nav_owner"><i class="fa-solid fa-store"></i> Business Owner Portal</h2>
         <div class="dashboard-layout glass-panel">
           <div class="dashboard-sidebar">
             <button class="dash-tab active" onclick="switchOwnerTab('info')">Basic Details</button>
@@ -464,7 +485,7 @@
     <!-- VIEW 7: ADMIN -->
     <section id="view-admin" class="app-view">
       <div class="container">
-        <h2><i class="fa-solid fa-user-shield"></i> AccessIndia AI Admin Portal</h2>
+        <h2 data-i18n="nav_admin"><i class="fa-solid fa-user-shield"></i> AccessIndia AI Admin Portal</h2>
         <div class="glass-panel p-4 mt-3">
           <h3>Verification Queue</h3>
           <p>System Operating Normally &bull; 12 Verified Places &bull; 23 Languages Supported</p>
@@ -475,7 +496,7 @@
     <!-- VIEW 8: USER PROFILE -->
     <section id="view-user" class="app-view">
       <div class="container">
-        <h2><i class="fa-solid fa-user"></i> Accessibility Profile</h2>
+        <h2><i class="fa-solid fa-user"></i> <span data-i18n="my_profile">My Profile</span></h2>
         <div class="glass-panel p-4 mt-3">
           <p>Primary Need: Wheelchair User (Ramp & Lift Required)</p>
           <p>Language: English (23 Languages available)</p>
@@ -494,7 +515,7 @@
       </div>
       <div id="chat-messages" class="chat-messages">
         <div class="message bot-msg">
-          <div class="msg-bubble">Namaste! Ask me about wheelchair ramps, entrance recommendations, CCTV parking, or accessible routes.</div>
+          <div class="msg-bubble" data-i18n="chat_welcome">Namaste! Ask me about wheelchair ramps, entrance recommendations, CCTV parking, or accessible routes.</div>
         </div>
       </div>
       <div class="chat-input-area">
@@ -542,9 +563,7 @@
         opening_hours: '10:00 AM',
         closing_hours: '10:00 PM',
         accessibility_score: 96,
-        entrances: [
-          { name: 'North Gate (Main Plaza)', is_recommended: 1, walking_distance_meters: 15, notes: 'Recommended step-free entrance with wide automatic sensor glass doors.' }
-        ],
+        entrances: [{ name: 'North Gate (Main Plaza)', is_recommended: 1, walking_distance_meters: 15, notes: 'Recommended step-free entrance with wide automatic sensor glass doors.' }],
         parking: { total_spaces: 450, occupied_spaces: 280, accessible_spaces: 24 },
         features: [
           { feature_name: 'Wheelchair Ramp', status: 'GREEN', details: 'Continuous 1:12 slope ramp with dual handrails' },
@@ -567,14 +586,9 @@
         opening_hours: '00:00 AM',
         closing_hours: '11:59 PM',
         accessibility_score: 98,
-        entrances: [
-          { name: 'Emergency Block Entrance', is_recommended: 1, walking_distance_meters: 10, notes: 'Zero-step entrance with wheelchairs stationed at gate.' }
-        ],
+        entrances: [{ name: 'Emergency Block Entrance', is_recommended: 1, walking_distance_meters: 10, notes: 'Zero-step entrance with wheelchairs stationed at gate.' }],
         parking: { total_spaces: 600, occupied_spaces: 410, accessible_spaces: 50 },
-        features: [
-          { feature_name: 'Wheelchair Ramp', status: 'GREEN', details: 'Compliant slope' },
-          { feature_name: 'Elevator', status: 'GREEN', details: 'Medical bed capacity' }
-        ]
+        features: [{ feature_name: 'Wheelchair Ramp', status: 'GREEN', details: 'Compliant slope' }, { feature_name: 'Elevator', status: 'GREEN', details: 'Medical bed capacity' }]
       },
       {
         id: 3,
@@ -591,24 +605,453 @@
         opening_hours: '00:00 AM',
         closing_hours: '11:59 PM',
         accessibility_score: 99,
-        entrances: [
-          { name: 'Gate 2 - PRM Assistance', is_recommended: 1, walking_distance_meters: 12, notes: 'Dedicated lane for passengers with reduced mobility.' }
-        ],
+        entrances: [{ name: 'Gate 2 - PRM Assistance', is_recommended: 1, walking_distance_meters: 12, notes: 'Dedicated lane for passengers with reduced mobility.' }],
         parking: { total_spaces: 1200, occupied_spaces: 820, accessible_spaces: 80 },
-        features: [
-          { feature_name: 'Wheelchair Ramp', status: 'GREEN', details: 'Full terminal step-free' }
-        ]
+        features: [{ feature_name: 'Wheelchair Ramp', status: 'GREEN', details: 'Full terminal step-free' }]
+      },
+      {
+        id: 4,
+        name: 'Chhatrapati Shivaji Maharaj Terminus (CSMT)',
+        category: 'Railway Stations',
+        description: 'UNESCO Heritage Railway Terminus upgraded with wheelchair ramps, battery-operated cars, tactile platform edge lines, and accessible ticket counters.',
+        address: 'Chhatrapati Shivaji Maharaj Terminus, Fort',
+        city: 'Mumbai',
+        state: 'Maharashtra',
+        pincode: '400001',
+        latitude: 18.9400,
+        longitude: 72.8353,
+        phone: '+91 22 2262 0603',
+        opening_hours: '00:00 AM',
+        closing_hours: '11:59 PM',
+        accessibility_score: 88,
+        entrances: [{ name: 'Platform 1 Suburban Concourse', is_recommended: 1, walking_distance_meters: 25, notes: 'Level entrance to platform, ramp connecting outer concourse.' }],
+        parking: { total_spaces: 200, occupied_spaces: 150, accessible_spaces: 15 },
+        features: [{ feature_name: 'Wheelchair Ramp', status: 'GREEN', details: 'Platform ramps' }, { feature_name: 'Tactile Paving', status: 'GREEN', details: 'Yellow safety strips' }]
+      },
+      {
+        id: 5,
+        name: 'Express Avenue Mall',
+        category: 'Shopping Malls',
+        description: 'Premier accessible shopping mall in Central Chennai with step-free entrances, spacious lifts, and designated PwD parking.',
+        address: 'Whites Road, Royapettah',
+        city: 'Chennai',
+        state: 'Tamil Nadu',
+        pincode: '600014',
+        latitude: 13.0587,
+        longitude: 80.2641,
+        phone: '+91 44 2846 4444',
+        opening_hours: '10:00 AM',
+        closing_hours: '10:00 PM',
+        accessibility_score: 94,
+        entrances: [{ name: 'Gate 1 Main Entrance', is_recommended: 1, walking_distance_meters: 10, notes: 'Wide automatic glass doors with low gradient ramp.' }],
+        parking: { total_spaces: 500, occupied_spaces: 300, accessible_spaces: 30 },
+        features: [{ feature_name: 'Wheelchair Ramp', status: 'GREEN', details: 'Continuous low-gradient ramp' }]
+      },
+      {
+        id: 6,
+        name: 'HITEC City Metro Station',
+        category: 'Railway Stations',
+        description: 'Modern elevated metro hub in Hyderabad equipped with wide lifts, tactile walking strips, and accessible automatic fare gates.',
+        address: 'HITEC City, Madhapur',
+        city: 'Hyderabad',
+        state: 'Telangana',
+        pincode: '500081',
+        latitude: 17.4474,
+        longitude: 78.3762,
+        phone: '+91 40 2333 1111',
+        opening_hours: '06:00 AM',
+        closing_hours: '11:00 PM',
+        accessibility_score: 95,
+        entrances: [{ name: 'Street Level Elevator Gate A', is_recommended: 1, walking_distance_meters: 5, notes: 'Direct elevator from street level straight to concourse.' }],
+        parking: { total_spaces: 300, occupied_spaces: 180, accessible_spaces: 20 },
+        features: [{ feature_name: 'Elevator / Lift', status: 'GREEN', details: 'Tactile buttons & audio announcements' }]
+      },
+      {
+        id: 7,
+        name: 'Phoenix Marketcity Pune',
+        category: 'Shopping Malls',
+        description: 'Vimannagar premier destination featuring step-free access, Braille lifts, wheelchair rentals, and PwD restrooms.',
+        address: 'Viman Nagar Road, Viman Nagar',
+        city: 'Pune',
+        state: 'Maharashtra',
+        pincode: '411014',
+        latitude: 18.5621,
+        longitude: 73.9168,
+        phone: '+91 20 6689 0000',
+        opening_hours: '10:00 AM',
+        closing_hours: '10:00 PM',
+        accessibility_score: 95,
+        entrances: [{ name: 'North Gate Ramp', is_recommended: 1, walking_distance_meters: 12, notes: 'Smooth 1:12 ramp entrance with sensor doors.' }],
+        parking: { total_spaces: 400, occupied_spaces: 220, accessible_spaces: 25 },
+        features: [{ feature_name: 'Wheelchair Ramp', status: 'GREEN', details: 'Compliant slope' }]
+      },
+      {
+        id: 8,
+        name: 'Science City Kolkata',
+        category: 'Parks',
+        description: 'Large interactive science center equipped with wide paved pathways, wheelchair ramps, and accessible food kiosks.',
+        address: 'JBS Haldane Ave, Mirania Gardens',
+        city: 'Kolkata',
+        state: 'West Bengal',
+        pincode: '700046',
+        latitude: 22.5414,
+        longitude: 88.3962,
+        phone: '+91 33 2285 4343',
+        opening_hours: '09:00 AM',
+        closing_hours: '08:00 PM',
+        accessibility_score: 91,
+        entrances: [{ name: 'Main Ticketing Gate', is_recommended: 1, walking_distance_meters: 15, notes: 'Wide barrier-free gate entry for wheelchairs.' }],
+        parking: { total_spaces: 250, occupied_spaces: 140, accessible_spaces: 15 },
+        features: [{ feature_name: 'Accessible Seating', status: 'GREEN', details: 'Benches & rest areas' }]
+      },
+      {
+        id: 9,
+        name: 'Alpha One Mall Ahmedabad',
+        category: 'Shopping Malls',
+        description: 'Vast shopping center at Vastrapur with wide corridors, elevators with audio feedback, and step-free parking.',
+        address: 'Vastrapur Lake Front',
+        city: 'Ahmedabad',
+        state: 'Gujarat',
+        pincode: '380015',
+        latitude: 23.0396,
+        longitude: 72.5308,
+        phone: '+91 79 4019 1111',
+        opening_hours: '10:00 AM',
+        closing_hours: '10:00 PM',
+        accessibility_score: 93,
+        entrances: [{ name: 'Lake Front Entrance', is_recommended: 1, walking_distance_meters: 10, notes: 'Level entrance to ground floor.' }],
+        parking: { total_spaces: 450, occupied_spaces: 260, accessible_spaces: 22 },
+        features: [{ feature_name: 'Elevator', status: 'GREEN', details: 'Wide entrance elevator' }]
+      },
+      {
+        id: 10,
+        name: 'SMS Hospital Jaipur',
+        category: 'Hospitals',
+        description: 'Major multi-specialty government hospital with ramp access across OPD blocks and dedicated PwD helpdesk.',
+        address: 'Jawahar Lal Nehru Marg, C Scheme',
+        city: 'Jaipur',
+        state: 'Rajasthan',
+        pincode: '302004',
+        latitude: 26.8978,
+        longitude: 75.8153,
+        phone: '+91 141 256 0291',
+        opening_hours: '00:00 AM',
+        closing_hours: '11:59 PM',
+        accessibility_score: 90,
+        entrances: [{ name: 'OPD Main Ramp Gate', is_recommended: 1, walking_distance_meters: 8, notes: 'Wide ramp to registration desk.' }],
+        parking: { total_spaces: 300, occupied_spaces: 210, accessible_spaces: 20 },
+        features: [{ feature_name: 'Wheelchair Ramp', status: 'GREEN', details: 'OPD Ramp' }]
       }
     ];
 
-    const categoriesList = [
-      { name: 'Restaurants', icon: 'fa-utensils', count: '1,240+ Places' },
-      { name: 'Shopping Malls', icon: 'fa-bag-shopping', count: '380+ Malls' },
-      { name: 'Hospitals', icon: 'fa-hospital', count: '850+ Hospitals' },
-      { name: 'Airports', icon: 'fa-plane-departure', count: '45 Terminals' },
-      { name: 'Railway Stations', icon: 'fa-train', count: '210+ Stations' },
-      { name: 'Parks', icon: 'fa-tree', count: '310+ Parks' }
-    ];
+    const i18n = {
+      en: {
+        hero_title: "Discover 100% Accessible Places & Smart Entrances Near You",
+        hero_subtitle: "Empowering wheelchair users, senior citizens, visually impaired, and families across India with verified step-free routes, CCTV parking AI, and indoor navigation.",
+        btn_search: "Search",
+        interactive_map: "Interactive Accessibility Map & Facility Finder",
+        map_desc: "Real-time status indicators (Green: Fully Accessible, Orange: Assisted, Red: Limited)",
+        a11y_tools: "WCAG 2.2 Toolkit:",
+        high_contrast: "High Contrast",
+        dark_mode: "Dark Mode",
+        read_page: "Read Page",
+        nav_home: "Home",
+        nav_categories: "Categories",
+        nav_search: "Search Places",
+        nav_route: "Accessible Route",
+        nav_owner: "Business Portal",
+        nav_admin: "Admin",
+        my_profile: "My Profile",
+        platform_tagline: "Universal Accessibility Platform",
+        popular_searches: "Popular Searches:",
+        cat_hospitals: "Hospitals",
+        cat_malls: "Shopping Malls",
+        cat_restaurants: "Restaurants",
+        cat_ev: "EV Charging",
+        cat_railway: "Railway Stations",
+        label_city: "City:",
+        verified_places: "Verified Nearby Places",
+        view_all: "View All",
+        spotlight_entrance_title: "Smart Entrance Recommendation",
+        spotlight_entrance_desc: "Calculates ramp slope, door clearance, and walking distance to direct you to the optimal entrance gate.",
+        spotlight_cctv_title: "CCTV Parking AI Occupancy",
+        spotlight_cctv_desc: "Analyzes live CCTV feeds to show real-time accessible parking spot availability.",
+        spotlight_indoor_title: "Indoor Navigation",
+        spotlight_indoor_desc: "Navigate multi-level facilities from parking to elevators and braille rest rooms.",
+        adv_search_title: "Advanced Accessibility Search",
+        filter_criteria: "Filter Criteria",
+        btn_apply: "Apply Filters",
+        btn_reset: "Reset Filters",
+        btn_back: "Back",
+        route_planner_title: "Step-Free Accessibility Route Planner",
+        btn_calc_route: "Calculate Step-Free Route",
+        chat_welcome: "Namaste! Ask me about wheelchair ramps, entrance recommendations, CCTV parking, or accessible routes."
+      },
+      mr: {
+        hero_title: "à¤¤à¥à¤®à¤šà¥à¤¯à¤¾ à¤œà¤µà¤³ à¥§à¥¦à¥¦% à¤¸à¥à¤²à¤­ à¤ à¤¿à¤•à¤¾à¤£à¥‡ à¤†à¤£à¤¿ à¤¸à¥à¤®à¤¾à¤°à¥à¤Ÿ à¤ªà¥à¤°à¤µà¥‡à¤¶à¤¦à¥à¤µà¤¾à¤°à¥‡ à¤¶à¥‹à¤§à¤¾",
+        hero_subtitle: "à¤µà¥à¤¹à¥€à¤²à¤šà¥‡à¤…à¤° à¤µà¤¾à¤ªà¤°à¤•à¤°à¥à¤¤à¥‡, à¤œà¥à¤¯à¥‡à¤·à¥à¤  à¤¨à¤¾à¤—à¤°à¤¿à¤• à¤†à¤£à¤¿ à¤¦à¥ƒà¤·à¥à¤Ÿà¤¿à¤¹à¥€à¤¨à¤¾à¤‚à¤¸à¤¾à¤ à¥€ à¤­à¤¾à¤°à¤¤à¤¾à¤¤à¥€à¤² à¤¸à¤°à¥à¤µà¥‹à¤¤à¥à¤¤à¤® à¤¸à¥à¤²à¤­à¤¤à¤¾ à¤ªà¥à¤²à¥…à¤Ÿà¤«à¥‰à¤°à¥à¤®.",
+        btn_search: "à¤¶à¥‹à¤§à¤¾",
+        interactive_map: "à¤‡à¤‚à¤Ÿà¤°à¥²à¤•à¥à¤Ÿà¤¿à¤µà¥à¤¹ à¤¸à¥à¤²à¤­à¤¤à¤¾ à¤¨à¤•à¤¾à¤¶à¤¾ à¤†à¤£à¤¿ à¤¸à¥à¤µà¤¿à¤§à¤¾ à¤¶à¥‹à¤§à¤•",
+        map_desc: "à¤°à¤¿à¤…à¤²-à¤Ÿà¤¾à¤‡à¤® à¤¸à¥à¤¥à¤¿à¤¤à¥€ à¤¨à¤¿à¤°à¥à¤¦à¥‡à¤¶à¤• (à¤¹à¤¿à¤°à¤µà¤¾: à¤ªà¥‚à¤°à¥à¤£à¤ªà¤£à¥‡ à¤¸à¥à¤²à¤­, à¤¨à¤¾à¤°à¤‚à¤—à¥€: à¤¸à¤¹à¤¾à¤¯à¥à¤¯à¤•, à¤²à¤¾à¤²: à¤®à¤°à¥à¤¯à¤¾à¤¦à¤¿à¤¤)",
+        a11y_tools: "WCAG 2.2 à¤Ÿà¥‚à¤²à¥à¤¸:",
+        high_contrast: "à¤‰à¤šà¥à¤š à¤•à¥‰à¤¨à¥à¤Ÿà¥à¤°à¤¾à¤¸à¥à¤Ÿ",
+        dark_mode: "à¤¡à¤¾à¤°à¥à¤• à¤®à¥‹à¤¡",
+        read_page: "à¤ªà¥ƒà¤·à¥à¤  à¤µà¤¾à¤šà¤¾",
+        nav_home: "à¤®à¥à¤–à¥à¤¯ à¤ªà¥ƒà¤·à¥à¤ ",
+        nav_categories: "à¤¶à¥à¤°à¥‡à¤£à¥à¤¯à¤¾",
+        nav_search: "à¤ à¤¿à¤•à¤¾à¤£à¥‡ à¤¶à¥‹à¤§à¤¾",
+        nav_route: "à¤¸à¥à¤²à¤­ à¤®à¤¾à¤°à¥à¤—",
+        nav_owner: "à¤µà¥à¤¯à¤µà¤¸à¤¾à¤¯ à¤ªà¥‹à¤°à¥à¤Ÿà¤²",
+        nav_admin: "à¥²à¤¡à¤®à¤¿à¤¨",
+        my_profile: "à¤®à¤¾à¤à¥€ à¤ªà¥à¤°à¥‹à¤«à¤¾à¤ˆà¤²",
+        platform_tagline: "à¤¸à¤¾à¤°à¥à¤µà¤¤à¥à¤°à¤¿à¤• à¤¸à¥à¤²à¤­à¤¤à¤¾ à¤ªà¥à¤²à¥…à¤Ÿà¤«à¥‰à¤°à¥à¤®",
+        popular_searches: "à¤²à¥‹à¤•à¤ªà¥à¤°à¤¿à¤¯ à¤¶à¥‹à¤§:",
+        cat_hospitals: "à¤°à¥à¤—à¥à¤£à¤¾à¤²à¤¯à¥‡",
+        cat_malls: "à¤¶à¥‰à¤ªà¤¿à¤‚à¤— à¤®à¥‰à¤²à¥à¤¸",
+        cat_restaurants: "à¤¹à¥‰à¤Ÿà¥‡à¤²à¥à¤¸ à¤µ à¤°à¥‡à¤¸à¥à¤Ÿà¥‰à¤°à¤‚à¤Ÿà¥à¤¸",
+        cat_ev: "à¤ˆà¤µà¥à¤¹à¥€ à¤šà¤¾à¤°à¥à¤œà¤¿à¤‚à¤—",
+        cat_railway: "à¤°à¥‡à¤²à¥à¤µà¥‡ à¤¸à¥à¤Ÿà¥‡à¤¶à¤¨à¥à¤¸",
+        label_city: "à¤¶à¤¹à¤°:",
+        verified_places: "à¤¸à¤¤à¥à¤¯à¤¾à¤ªà¤¿à¤¤ à¤œà¤µà¤³à¥€à¤² à¤ à¤¿à¤•à¤¾à¤£à¥‡",
+        view_all: "à¤¸à¤°à¥à¤µ à¤ªà¤¹à¤¾",
+        spotlight_entrance_title: "à¤¸à¥à¤®à¤¾à¤°à¥à¤Ÿ à¤ªà¥à¤°à¤µà¥‡à¤¶à¤¦à¥à¤µà¤¾à¤° à¤¶à¤¿à¤«à¤¾à¤°à¤¸",
+        spotlight_entrance_desc: "à¤°à¥…à¤®à¥à¤ªà¤šà¤¾ à¤‰à¤¤à¤¾à¤° à¤†à¤£à¤¿ à¤²à¤¿à¤«à¥à¤Ÿà¤ªà¤°à¥à¤¯à¤‚à¤¤à¤šà¥‡ à¤…à¤‚à¤¤à¤° à¤®à¥‹à¤œà¥‚à¤¨ à¤¸à¤°à¥à¤µà¥‹à¤¤à¥à¤¤à¤® à¤ªà¥à¤°à¤µà¥‡à¤¶à¤¦à¥à¤µà¤¾à¤° à¤¦à¤¾à¤–à¤µà¤¤à¥‡.",
+        spotlight_cctv_title: "à¤¸à¥€à¤¸à¥€à¤Ÿà¥€à¤µà¥à¤¹à¥€ à¤ªà¤¾à¤°à¥à¤•à¤¿à¤‚à¤— à¤à¤†à¤¯ à¤¸à¥à¤¥à¤¿à¤¤à¥€",
+        spotlight_cctv_desc: "à¤¦à¤¿à¤µà¥à¤¯à¤¾à¤‚à¤—à¤¾à¤‚à¤¸à¤¾à¤ à¥€ à¤‰à¤ªà¤²à¤¬à¥à¤§ à¤ªà¤¾à¤°à¥à¤•à¤¿à¤‚à¤— à¤œà¤¾à¤—à¤¾à¤‚à¤šà¥‡ à¤²à¤¾à¤ˆà¤µà¥à¤¹ à¤µà¤¿à¤¶à¥à¤²à¥‡à¤·à¤£.",
+        spotlight_indoor_title: "à¤‡à¤¨à¤¡à¥‹à¤…à¤° à¤¨à¥‡à¤µà¥à¤¹à¤¿à¤—à¥‡à¤¶à¤¨",
+        spotlight_indoor_desc: "à¤ªà¤¾à¤°à¥à¤•à¤¿à¤‚à¤—à¤ªà¤¾à¤¸à¥‚à¤¨ à¤²à¤¿à¤«à¥à¤Ÿ à¤†à¤£à¤¿ à¤¬à¥à¤°à¥‡à¤² à¤¸à¥à¤µà¤šà¥à¤›à¤¤à¤¾à¤—à¥ƒà¤¹à¤¾à¤‚à¤ªà¤°à¥à¤¯à¤‚à¤¤ à¤ªà¤¾à¤¯à¤°à¥€à¤®à¥à¤•à¥à¤¤ à¤®à¤¾à¤°à¥à¤—.",
+        adv_search_title: "à¤ªà¥à¤°à¤—à¤¤ à¤¸à¥à¤²à¤­à¤¤à¤¾ à¤¶à¥‹à¤§",
+        filter_criteria: "à¤«à¤¿à¤²à¥à¤Ÿà¤° à¤¨à¤¿à¤•à¤·",
+        btn_apply: "à¤«à¤¿à¤²à¥à¤Ÿà¤° à¤²à¤¾à¤—à¥‚ à¤•à¤°à¤¾",
+        btn_reset: "à¤ªà¥à¤¨à¥à¤¹à¤¾ à¤¸à¥‡à¤Ÿ à¤•à¤°à¤¾",
+        btn_back: "à¤®à¤¾à¤—à¥‡ à¤œà¤¾",
+        route_planner_title: "à¤ªà¤¾à¤¯à¤°à¥€à¤®à¥à¤•à¥à¤¤ à¤¸à¥à¤²à¤­ à¤®à¤¾à¤°à¥à¤— à¤¨à¤¿à¤¯à¥‹à¤œà¤•",
+        btn_calc_route: "à¤¸à¥à¤²à¤­ à¤®à¤¾à¤°à¥à¤—à¤¾à¤šà¥€ à¤—à¤£à¤¨à¤¾ à¤•à¤°à¤¾",
+        chat_welcome: "à¤¨à¤®à¤¸à¥à¤•à¤¾à¤°! à¤µà¥à¤¹à¥€à¤²à¤šà¥‡à¤…à¤° à¤°à¥…à¤®à¥à¤ª, à¤ªà¥à¤°à¤µà¥‡à¤¶à¤¦à¥à¤µà¤¾à¤° à¤•à¤¿à¤‚à¤µà¤¾ à¤¸à¥à¤²à¤­ à¤®à¤¾à¤°à¥à¤—à¤¾à¤‚à¤¬à¤¦à¥à¤¦à¤² à¤µà¤¿à¤šà¤¾à¤°à¥‚ à¤¶à¤•à¤¤à¤¾."
+      },
+      hi: {
+        hero_title: "à¤…à¤ªà¤¨à¥‡ à¤ªà¤¾à¤¸ 100% à¤¸à¥à¤—à¤® à¤¸à¥à¤¥à¤¾à¤¨ à¤”à¤° à¤¸à¥à¤®à¤¾à¤°à¥à¤Ÿ à¤ªà¥à¤°à¤µà¥‡à¤¶ à¤¦à¥à¤µà¤¾à¤° à¤–à¥‹à¤œà¥‡à¤‚",
+        hero_subtitle: "à¤µà¥à¤¹à¥€à¤²à¤šà¥‡à¤¯à¤° à¤‰à¤ªà¤¯à¥‹à¤—à¤•à¤°à¥à¤¤à¤¾à¤“à¤‚, à¤µà¤°à¤¿à¤·à¥à¤  à¤¨à¤¾à¤—à¤°à¤¿à¤•à¥‹à¤‚ à¤”à¤° à¤¦à¥ƒà¤·à¥à¤Ÿà¤¿à¤¬à¤¾à¤§à¤¿à¤¤ à¤²à¥‹à¤—à¥‹à¤‚ à¤•à¥‹ à¤­à¤¾à¤°à¤¤ à¤­à¤° à¤®à¥‡à¤‚ à¤¸à¥€à¤¢à¤¼à¥€-à¤®à¥à¤•à¥à¤¤ à¤®à¤¾à¤°à¥à¤— à¤”à¤° à¤ªà¤¾à¤°à¥à¤•à¤¿à¤‚à¤— AI à¤•à¥‡ à¤¸à¤¾à¤¥ à¤¸à¤¶à¤•à¥à¤¤ à¤¬à¤¨à¤¾à¤¨à¤¾à¥¤",
+        btn_search: "à¤–à¥‹à¤œà¥‡à¤‚",
+        interactive_map: "à¤‡à¤‚à¤Ÿà¤°à¥ˆà¤•à¥à¤Ÿà¤¿à¤µ à¤à¤•à¥à¤¸à¥‡à¤¸à¤¿à¤¬à¤¿à¤²à¤¿à¤Ÿà¥€ à¤®à¤¾à¤¨à¤šà¤¿à¤¤à¥à¤°",
+        map_desc: "à¤µà¤¾à¤¸à¥à¤¤à¤µà¤¿à¤• à¤¸à¤®à¤¯ à¤¸à¥à¤¥à¤¿à¤¤à¤¿ à¤¸à¤‚à¤•à¥‡à¤¤à¤• (à¤¹à¤°à¤¾: à¤ªà¥‚à¤°à¥à¤£ à¤¸à¥à¤—à¤®, à¤¨à¤¾à¤°à¤‚à¤—à¥€: à¤¸à¤¹à¤¾à¤¯à¤¤à¤¾ à¤ªà¥à¤°à¤¾à¤ªà¥à¤¤)",
+        a11y_tools: "WCAG 2.2 à¤Ÿà¥‚à¤²à¥à¤¸:",
+        high_contrast: "à¤‰à¤šà¥à¤š à¤•à¤‚à¤Ÿà¥à¤°à¤¾à¤¸à¥à¤Ÿ",
+        dark_mode: "à¤¡à¤¾à¤°à¥à¤• à¤®à¥‹à¤¡",
+        read_page: "à¤ªà¥ƒà¤·à¥à¤  à¤ªà¤¢à¤¼à¥‡à¤‚",
+        nav_home: "à¤®à¥à¤–à¥à¤¯ à¤ªà¥ƒà¤·à¥à¤ ",
+        nav_categories: "à¤¶à¥à¤°à¥‡à¤£à¤¿à¤¯à¤¾à¤",
+        nav_search: "à¤¸à¥à¤¥à¤¾à¤¨ à¤–à¥‹à¤œà¥‡à¤‚",
+        nav_route: "à¤¸à¥à¤—à¤® à¤®à¤¾à¤°à¥à¤—",
+        nav_owner: "à¤µà¥à¤¯à¤¾à¤ªà¤¾à¤° à¤ªà¥‹à¤°à¥à¤Ÿà¤²",
+        nav_admin: "à¤à¤¡à¤®à¤¿à¤¨",
+        my_profile: "à¤®à¥‡à¤°à¥€ à¤ªà¥à¤°à¥‹à¤«à¤¼à¤¾à¤‡à¤²",
+        platform_tagline: "à¤¸à¤¾à¤°à¥à¤µà¤­à¥Œà¤®à¤¿à¤• à¤ªà¤¹à¥à¤‚à¤š à¤®à¤‚à¤š",
+        popular_searches: "à¤²à¥‹à¤•à¤ªà¥à¤°à¤¿à¤¯ à¤–à¥‹à¤œà¥‡à¤‚:",
+        cat_hospitals: "à¤…à¤¸à¥à¤ªà¤¤à¤¾à¤²",
+        cat_malls: "à¤¶à¥‰à¤ªà¤¿à¤‚à¤— à¤®à¥‰à¤²",
+        cat_restaurants: "à¤°à¥‡à¤¸à¥à¤¤à¤°à¤¾à¤‚",
+        cat_ev: "à¤ˆà¤µà¥€ à¤šà¤¾à¤°à¥à¤œà¤¿à¤‚à¤—",
+        cat_railway: "à¤°à¥‡à¤²à¤µà¥‡ à¤¸à¥à¤Ÿà¥‡à¤¶à¤¨",
+        label_city: "à¤¶à¤¹à¤°:",
+        verified_places: "à¤¸à¤¤à¥à¤¯à¤¾à¤ªà¤¿à¤¤ à¤¨à¤¿à¤•à¤Ÿà¤¤à¤® à¤¸à¥à¤¥à¤¾à¤¨",
+        view_all: "à¤¸à¤­à¥€ à¤¦à¥‡à¤–à¥‡à¤‚",
+        spotlight_entrance_title: "à¤¸à¥à¤®à¤¾à¤°à¥à¤Ÿ à¤ªà¥à¤°à¤µà¥‡à¤¶ à¤¦à¥à¤µà¤¾à¤° à¤¸à¤¿à¤«à¤¾à¤°à¤¿à¤¶",
+        spotlight_entrance_desc: "à¤°à¥ˆà¤‚à¤ª à¤¢à¤²à¤¾à¤¨ à¤”à¤° à¤ªà¥ˆà¤¦à¤² à¤¦à¥‚à¤°à¥€ à¤•à¥€ à¤—à¤£à¤¨à¤¾ à¤•à¤°à¤•à¥‡ à¤†à¤ªà¤•à¥‹ à¤‡à¤·à¥à¤Ÿà¤¤à¤® à¤ªà¥à¤°à¤µà¥‡à¤¶ à¤¦à¥à¤µà¤¾à¤° à¤ªà¤° à¤²à¥‡ à¤œà¤¾à¤¤à¤¾ à¤¹à¥ˆà¥¤",
+        spotlight_cctv_title: "à¤¸à¥€à¤¸à¥€à¤Ÿà¥€à¤µà¥€ à¤ªà¤¾à¤°à¥à¤•à¤¿à¤‚à¤— à¤à¤†à¤ˆ à¤‰à¤ªà¤¸à¥à¤¥à¤¿à¤¤à¤¿",
+        spotlight_cctv_desc: "à¤¸à¥à¤—à¤® à¤ªà¤¾à¤°à¥à¤•à¤¿à¤‚à¤— à¤¸à¥à¤¥à¤¾à¤¨à¥‹à¤‚ à¤•à¥€ à¤µà¤¾à¤¸à¥à¤¤à¤µà¤¿à¤• à¤¸à¤®à¤¯ à¤‰à¤ªà¤²à¤¬à¥à¤§à¤¤à¤¾ à¤•à¤¾ à¤µà¤¿à¤¶à¥à¤²à¥‡à¤·à¤£ à¤•à¤°à¤¤à¤¾ à¤¹à¥ˆà¥¤",
+        spotlight_indoor_title: "à¤‡à¤¨à¤¡à¥‹à¤° à¤¨à¥‡à¤µà¤¿à¤—à¥‡à¤¶à¤¨",
+        spotlight_indoor_desc: "à¤ªà¤¾à¤°à¥à¤•à¤¿à¤‚à¤— à¤¸à¥‡ à¤²à¤¿à¤«à¥à¤Ÿ à¤”à¤° à¤¬à¥à¤°à¥‡à¤² à¤¶à¥Œà¤šà¤¾à¤²à¤¯ à¤¤à¤• à¤¬à¤¹à¥-à¤¸à¥à¤¤à¤°à¥€à¤¯ à¤¨à¥‡à¤µà¤¿à¤—à¥‡à¤¶à¤¨à¥¤",
+        adv_search_title: "à¤‰à¤¨à¥à¤¨à¤¤ à¤ªà¤¹à¥à¤‚à¤š à¤–à¥‹à¤œ",
+        filter_criteria: "à¤«à¤¼à¤¿à¤²à¥à¤Ÿà¤° à¤®à¤¾à¤¨à¤¦à¤‚à¤¡",
+        btn_apply: "à¤«à¤¼à¤¿à¤²à¥à¤Ÿà¤° à¤²à¤¾à¤—à¥‚ à¤•à¤°à¥‡à¤‚",
+        btn_reset: "à¤°à¥€à¤¸à¥‡à¤Ÿ à¤•à¤°à¥‡à¤‚",
+        btn_back: "à¤µà¤¾à¤ªà¤¸ à¤œà¤¾à¤à¤‚",
+        route_planner_title: "à¤¸à¥€à¤¢à¤¼à¥€-à¤®à¥à¤•à¥à¤¤ à¤®à¤¾à¤°à¥à¤— à¤¯à¥‹à¤œà¤¨à¤¾à¤•à¤¾à¤°",
+        btn_calc_route: "à¤¸à¥à¤—à¤® à¤®à¤¾à¤°à¥à¤— à¤•à¥€ à¤—à¤£à¤¨à¤¾ à¤•à¤°à¥‡à¤‚",
+        chat_welcome: "à¤¨à¤®à¤¸à¥à¤¤à¥‡! à¤µà¥à¤¹à¥€à¤²à¤šà¥‡à¤¯à¤° à¤°à¥ˆà¤‚à¤ª, à¤ªà¥à¤°à¤µà¥‡à¤¶ à¤¦à¥à¤µà¤¾à¤° à¤¯à¤¾ à¤¸à¥à¤—à¤® à¤®à¤¾à¤°à¥à¤—à¥‹à¤‚ à¤•à¥‡ à¤¬à¤¾à¤°à¥‡ à¤®à¥‡à¤‚ à¤ªà¥‚à¤›à¥‡à¤‚à¥¤"
+      },
+      ta: {
+        hero_title: "à®‰à®™à¯à®•à®³à¯à®•à¯à®•à¯ à®…à®°à¯à®•à®¿à®²à¯à®³à¯à®³ 100% à®…à®£à¯à®•à®•à¯à®•à¯‚à®Ÿà®¿à®¯ à®‡à®Ÿà®™à¯à®•à®³à¯ˆà®•à¯ à®•à®£à¯à®Ÿà®±à®¿à®¯à®µà¯à®®à¯",
+        hero_subtitle: "à®šà®•à¯à®•à®° à®¨à®¾à®±à¯à®•à®¾à®²à®¿ à®ªà®¯à®©à®°à¯à®•à®³à¯ à®®à®±à¯à®±à¯à®®à¯ à®®à¯à®¤à®¿à®¯à®µà®°à¯à®•à®³à¯à®•à¯à®•à®¾à®© à®‡à®¨à¯à®¤à®¿à®¯à®¾à®µà®¿à®©à¯ à®®à¯à®¤à®©à¯à®®à¯ˆ à®…à®£à¯à®•à®²à¯ à®¤à®³à®®à¯.",
+        btn_search: "à®¤à¯‡à®Ÿà¯",
+        interactive_map: "à®…à®£à¯à®•à®²à¯ à®µà®°à¯ˆà®ªà®Ÿà®®à¯",
+        map_desc: "à®¨à¯‡à®°à®²à¯ˆ à®¨à®¿à®²à¯ˆ à®•à®¾à®Ÿà¯à®Ÿà®¿à®•à®³à¯ (à®ªà®šà¯à®šà¯ˆ: à®®à¯à®´à¯ à®…à®£à¯à®•à®²à¯, à®†à®°à®žà¯à®šà¯: à®‰à®¤à®µà®¿)",
+        a11y_tools: "WCAG à®•à®°à¯à®µà®¿à®•à®³à¯:",
+        high_contrast: "à®…à®¤à®¿à®• à®®à®¾à®±à¯à®ªà®¾à®Ÿà¯",
+        dark_mode: "à®‡à®°à¯à®£à¯à®Ÿ à®ªà®¯à®©à¯à®®à¯à®±à¯ˆ",
+        read_page: "à®ªà®•à¯à®•à®¤à¯à®¤à¯ˆà®ªà¯ à®ªà®Ÿà®¿",
+        nav_home: "à®®à¯à®•à®ªà¯à®ªà¯",
+        nav_categories: "à®µà®•à¯ˆà®•à®³à¯",
+        nav_search: "à®‡à®Ÿà®™à¯à®•à®³à¯ˆà®¤à¯ à®¤à¯‡à®Ÿà¯",
+        nav_route: "à®…à®£à¯à®•à®²à¯ à®ªà®¾à®¤à¯ˆ",
+        nav_owner: "à®µà®£à®¿à®• à®ªà¯‹à®°à¯à®Ÿà®²à¯",
+        nav_admin: "à®¨à®¿à®°à¯à®µà®¾à®•à®¿",
+        my_profile: "à®Žà®©à¯ à®šà¯à®¯à®µà®¿à®µà®°à®®à¯",
+        platform_tagline: "à®‰à®²à®•à®³à®¾à®µà®¿à®¯ à®…à®£à¯à®•à®²à¯ à®¤à®³à®®à¯",
+        popular_searches: "à®ªà®¿à®°à®ªà®²à®®à®¾à®© à®¤à¯‡à®Ÿà®²à¯à®•à®³à¯:",
+        cat_hospitals: "à®®à®°à¯à®¤à¯à®¤à¯à®µà®®à®©à¯ˆà®•à®³à¯",
+        cat_malls: "à®·à®¾à®ªà¯à®ªà®¿à®™à¯ à®®à®¾à®²à¯à®•à®³à¯",
+        cat_restaurants: "à®‰à®£à®µà®•à®™à¯à®•à®³à¯",
+        cat_ev: "à®®à®¿à®©à¯à®šà®¾à®° à®µà®¾à®•à®© à®šà®¾à®°à¯à®œà®¿à®™à¯",
+        cat_railway: "à®°à®¯à®¿à®²à¯ à®¨à®¿à®²à¯ˆà®¯à®™à¯à®•à®³à¯",
+        label_city: "à®¨à®•à®°à®®à¯:",
+        verified_places: "à®šà®°à®¿à®ªà®¾à®°à¯à®•à¯à®•à®ªà¯à®ªà®Ÿà¯à®Ÿ à®‡à®Ÿà®™à¯à®•à®³à¯",
+        view_all: "à®…à®©à¯ˆà®¤à¯à®¤à¯ˆà®¯à¯à®®à¯ à®•à®¾à®£à¯",
+        adv_search_title: "à®®à¯‡à®®à¯à®ªà®Ÿà¯à®Ÿ à®…à®£à¯à®•à®²à¯ à®¤à¯‡à®Ÿà®²à¯",
+        filter_criteria: "à®µà®Ÿà®¿à®•à®Ÿà¯à®Ÿà®¿ à®…à®³à®µà¯à®•à¯‹à®²à¯à®•à®³à¯",
+        btn_apply: "à®µà®Ÿà®¿à®•à®Ÿà¯à®Ÿà®¿à®•à®³à¯ˆà®ªà¯ à®ªà®¯à®©à¯à®ªà®Ÿà¯à®¤à¯à®¤à¯",
+        btn_reset: "à®®à¯€à®Ÿà¯à®Ÿà®®à¯ˆ",
+        btn_back: "à®ªà®¿à®©à¯à®©à®¾à®²à¯",
+        route_planner_title: "à®ªà®Ÿà®¿à®•à¯à®•à®Ÿà¯à®Ÿà¯ à®‡à®²à¯à®²à®¾à®¤ à®ªà®¾à®¤à¯ˆ à®¤à®¿à®Ÿà¯à®Ÿà®®à®¿à®Ÿà¯à®ªà®µà®°à¯",
+        btn_calc_route: "à®ªà®¾à®¤à¯ˆà®¯à¯ˆà®•à¯ à®•à®£à®•à¯à®•à®¿à®Ÿà¯",
+        chat_welcome: "à®µà®£à®•à¯à®•à®®à¯! à®…à®£à¯à®•à®•à¯à®•à¯‚à®Ÿà®¿à®¯ à®ªà®¾à®¤à¯ˆà®•à®³à¯ à®®à®±à¯à®±à¯à®®à¯ à®šà®•à¯à®•à®° à®¨à®¾à®±à¯à®•à®¾à®²à®¿ à®šà®¾à®¯à¯à®µà¯à®¤à®³à®™à¯à®•à®³à¯ à®ªà®±à¯à®±à®¿ à®•à¯‡à®³à¯à®™à¯à®•à®³à¯."
+      },
+      te: {
+        hero_title: "à°®à±€ à°¸à°®à±€à°ªà°‚à°²à±‹à°¨à°¿ 100% à°…à°‚à°¦à±à°¬à°¾à°Ÿà±à°²à±‹ à°‰à°‚à°¡à±‡ à°ªà±à°°à°¦à±‡à°¶à°¾à°²à°¨à± à°•à°¨à±à°—à±Šà°¨à°‚à°¡à°¿",
+        hero_subtitle: "à°µà±€à°²à± à°šà±ˆà°°à± à°µà°¿à°¨à°¿à°¯à±‹à°—à°¦à°¾à°°à±à°²à± à°®à°°à°¿à°¯à± à°¸à±€à°¨à°¿à°¯à°°à± à°¸à°¿à°Ÿà°¿à°œà°¨à±à°²à°•à± à°­à°¾à°°à°¤à°¦à±‡à°¶à°ªà± à°…à°¤à±à°¯à±à°¤à±à°¤à°® à°¯à°¾à°•à±à°¸à±†à°¸à°¿à°¬à°¿à°²à°¿à°Ÿà±€ à°ªà±à°²à°¾à°Ÿà±â€Œà°«à°¾à°°à°®à±.",
+        btn_search: "à°µà±†à°¤à°•à°‚à°¡à°¿",
+        interactive_map: "à°¯à°¾à°•à±à°¸à±†à°¸à°¿à°¬à°¿à°²à°¿à°Ÿà±€ à°®à±à°¯à°¾à°ªà±",
+        map_desc: "à°°à°¿à°¯à°²à± à°Ÿà±ˆà°®à± à°¸à±à°¥à°¿à°¤à°¿ à°¸à±‚à°šà°¿à°•à°²à± (à°†à°•à±à°ªà°šà±à°š: à°ªà±‚à°°à±à°¤à°¿ à°¯à°¾à°•à±à°¸à±†à°¸à±)",
+        a11y_tools: "WCAG à°Ÿà±‚à°²à±à°¸à±:",
+        high_contrast: "à°¹à±ˆ à°•à°¾à°‚à°Ÿà±à°°à°¾à°¸à±à°Ÿà±",
+        dark_mode: "à°¡à°¾à°°à±à°•à± à°®à±‹à°¡à±",
+        read_page: "à°ªà±‡à°œà±€ à°šà°¦à°µà°‚à°¡à°¿",
+        nav_home: "à°¹à±‹à°®à±",
+        nav_categories: "à°µà°°à±à°—à°¾à°²à±",
+        nav_search: "à°ªà±à°°à°¦à±‡à°¶à°¾à°²à± à°µà±†à°¤à°•à°‚à°¡à°¿",
+        nav_route: "à°¸à±à°²à°­à°®à±ˆà°¨ à°®à°¾à°°à±à°—à°‚",
+        nav_owner: "à°¬à°¿à°œà°¿à°¨à±†à°¸à± à°ªà±‹à°°à±à°Ÿà°²à±",
+        nav_admin: "à°…à°¡à±à°®à°¿à°¨à±",
+        my_profile: "à°¨à°¾ à°ªà±à°°à±Šà°«à±ˆà°²à±",
+        platform_tagline: "à°¯à±‚à°¨à°¿à°µà°°à±à°¸à°²à± à°¯à°¾à°•à±à°¸à±†à°¸à°¿à°¬à°¿à°²à°¿à°Ÿà±€ à°ªà±à°²à°¾à°Ÿà±â€Œà°«à°¾à°°à°®à±",
+        label_city: "à°¨à°—à°°à°‚:",
+        verified_places: "à°ªà°°à°¿à°¶à±€à°²à°¿à°‚à°šà°¬à°¡à°¿à°¨ à°ªà±à°°à°¦à±‡à°¶à°¾à°²à±",
+        view_all: "à°…à°¨à±à°¨à±€ à°šà±‚à°¡à°‚à°¡à°¿",
+        adv_search_title: "à°…à°§à±à°¨à°¾à°¤à°¨ à°¶à±‹à°§à°¨",
+        filter_criteria: "à°«à°¿à°²à±à°Ÿà°°à± à°ªà±à°°à°®à°¾à°£à°¾à°²à±",
+        btn_apply: "à°«à°¿à°²à±à°Ÿà°°à±à°²à± à°µà°°à±à°¤à°¿à°‚à°šà±",
+        btn_reset: "à°°à±€à°¸à±†à°Ÿà± à°šà±‡à°¯à°‚à°¡à°¿",
+        btn_back: "à°µà±†à°¨à±à°•à°•à±",
+        route_planner_title: "à°®à±†à°Ÿà±à°²à± à°²à±‡à°¨à°¿ à°®à°¾à°°à±à°— à°ªà±à°²à°¾à°¨à°°à±",
+        btn_calc_route: "à°®à°¾à°°à±à°—à°¾à°¨à±à°¨à°¿ à°²à±†à°•à±à°•à°¿à°‚à°šà°‚à°¡à°¿",
+        chat_welcome: "à°¨à°®à°¸à±à°¤à±‡! à°µà±€à°²à± à°šà±ˆà°°à± à°°à±à°¯à°¾à°‚à°ªà±â€Œà°²à± à°®à°°à°¿à°¯à± à°…à°‚à°¦à±à°¬à°¾à°Ÿà±à°²à±‹ à°‰à°¨à±à°¨ à°®à°¾à°°à±à°—à°¾à°² à°—à±à°°à°¿à°‚à°šà°¿ à°…à°¡à°—à°‚à°¡à°¿."
+      },
+      kn: {
+        hero_title: "à²¨à²¿à²®à³à²® à²¹à²¤à³à²¤à²¿à²°à²µà²¿à²°à³à²µ 100% à²¸à³à²—à²® à²¸à³à²¥à²³à²—à²³à³ à²®à²¤à³à²¤à³ à²¦à³à²µà²¾à²°à²—à²³à²¨à³à²¨à³ à²¹à³à²¡à³à²•à²¿",
+        hero_subtitle: "à²µà³à²¹à³€à²²à³â€Œà²šà³‡à²°à³ à²¬à²³à²•à³†à²¦à²¾à²°à²°à³ à²®à²¤à³à²¤à³ à²¹à²¿à²°à²¿à²¯ à²¨à²¾à²—à²°à²¿à²•à²°à²¿à²—à³† à²­à²¾à²°à²¤à²¦ à²ªà³à²°à²®à³à²– à²ªà³à²°à²µà³‡à²¶à²¿à²¸à³à²µà²¿à²•à³† à²µà³‡à²¦à²¿à²•à³†.",
+        btn_search: "à²¹à³à²¡à³à²•à²¿",
+        interactive_map: "à²¸à²‚à²µà²¾à²¦à²¾à²¤à³à²®à²• à²¨à²•à³à²·à³†",
+        map_desc: "à²°à²¿à²¯à²²à³-à²Ÿà³ˆà²®à³ à²¸à³à²¥à²¿à²¤à²¿ à²¸à³‚à²šà²•à²—à²³à³ (à²¹à²¸à²¿à²°à³: à²¸à²‚à²ªà³‚à²°à³à²£ à²¸à³à²—à²®)",
+        a11y_tools: "WCAG à²‰à²ªà²•à²°à²£à²—à²³à³:",
+        high_contrast: "à²¹à³ˆ à²•à²¾à²‚à²Ÿà³à²°à²¾à²¸à³à²Ÿà³",
+        dark_mode: "à²¡à²¾à²°à³à²•à³ à²®à³‹à²¡à³",
+        read_page: "à²ªà³à²Ÿ à²“à²¦à²¿",
+        nav_home: "à²®à³à²–à²ªà³à²Ÿ",
+        nav_categories: "à²µà²°à³à²—à²—à²³à³",
+        nav_search: "à²¸à³à²¥à²³ à²¹à³à²¡à³à²•à²¿",
+        nav_route: "à²¸à³à²—à²® à²®à²¾à²°à³à²—",
+        nav_owner: "à²µà³à²¯à²¾à²ªà²¾à²° à²ªà³‹à²°à³à²Ÿà²²à³",
+        nav_admin: "à²…à²¡à³à²®à²¿à²¨à³",
+        my_profile: "à²¨à²¨à³à²¨ à²ªà³à²°à³Šà²«à³ˆà²²à³",
+        platform_tagline: "à²¸à²¾à²°à³à²µà²¤à³à²°à²¿à²• à²ªà³à²°à²µà³‡à²¶à²¿à²¸à³à²µà²¿à²•à³† à²µà³‡à²¦à²¿à²•à³†",
+        label_city: "à²¨à²—à²°:",
+        verified_places: "à²ªà²°à²¿à²¶à³€à²²à²¿à²¸à²¿à²¦ à²¸à³à²¥à²³à²—à²³à³",
+        view_all: "à²Žà²²à³à²²à²µà²¨à³à²¨à³‚ à²µà³€à²•à³à²·à²¿à²¸à²¿",
+        adv_search_title: "à²¸à³à²§à²¾à²°à²¿à²¤ à²¹à³à²¡à³à²•à²¾à²Ÿ",
+        filter_criteria: "à²«à²¿à²²à³à²Ÿà²°à³ à²®à²¾à²¨à²¦à²‚à²¡à²—à²³à³",
+        btn_apply: "à²«à²¿à²²à³à²Ÿà²°à³ à²…à²¨à³à²µà²¯à²¿à²¸à²¿",
+        btn_reset: "à²®à²°à³à²¹à³Šà²‚à²¦à²¿à²¸à²¿",
+        btn_back: "à²¹à²¿à²‚à²¦à³†",
+        route_planner_title: "à²®à³†à²Ÿà³à²Ÿà²¿à²²à³ à²°à²¹à²¿à²¤ à²®à²¾à²°à³à²— à²¯à³‹à²œà²•",
+        btn_calc_route: "à²®à²¾à²°à³à²—à²µà²¨à³à²¨à³ à²²à³†à²•à³à²•à²¹à²¾à²•à²¿",
+        chat_welcome: "à²¨à²®à²¸à³à²•à²¾à²°! à²µà³à²¹à³€à²²à³â€Œà²šà³‡à²°à³ à²°à³à²¯à²¾à²‚à²ªà³â€Œà²—à²³à³ à²®à²¤à³à²¤à³ à²®à²¾à²°à³à²—à²—à²³ à²¬à²—à³à²—à³† à²•à³‡à²³à²¿."
+      },
+      ml: {
+        hero_title: "à´¨à´¿à´™àµà´™à´³àµà´Ÿàµ† à´¸à´®àµ€à´ªà´®àµà´³àµà´³ 100% à´¸àµà´—à´®à´®à´¾à´¯ à´¸àµà´¥à´²à´™àµà´™àµ¾ à´•à´£àµà´Ÿàµ†à´¤àµà´¤àµ‚",
+        hero_subtitle: "à´µàµ€àµ½à´šàµ†à´¯àµ¼ à´‰à´ªà´¯àµ‹à´•àµà´¤à´¾à´•àµà´•àµ¾à´•àµà´•àµà´‚ à´®àµà´¤à´¿àµ¼à´¨àµà´¨ à´ªàµ—à´°à´¨àµà´®à´¾àµ¼à´•àµà´•àµà´®àµà´³àµà´³ à´‡à´¨àµà´¤àµà´¯à´¯à´¿à´²àµ† à´®àµàµ»à´¨à´¿à´° à´ªàµà´²à´¾à´±àµà´±àµâ€Œà´«àµ‹à´‚.",
+        btn_search: "à´¤à´¿à´°à´¯àµà´•",
+        interactive_map: "à´¸àµà´—à´®à´¤ à´­àµ‚à´ªà´Ÿà´‚",
+        a11y_tools: "WCAG à´Ÿàµ‚à´³àµà´•àµ¾:",
+        nav_home: "à´¹àµ‹à´‚",
+        nav_categories: "à´µà´¿à´­à´¾à´—à´™àµà´™àµ¾",
+        nav_search: "à´¸àµà´¥à´²à´™àµà´™àµ¾ à´¤à´¿à´°à´¯àµà´•",
+        nav_route: "à´¸àµà´—à´® à´ªà´¾à´¤",
+        nav_owner: "à´¬à´¿à´¸à´¿à´¨à´¸àµà´¸àµ à´ªàµ‹àµ¼à´Ÿàµà´Ÿàµ½",
+        nav_admin: "à´…à´¡àµà´®à´¿àµ»",
+        my_profile: "à´Žà´¨àµà´±àµ† à´ªàµà´°àµŠà´«àµˆàµ½"
+      },
+      gu: {
+        hero_title: "àª¤àª®àª¾àª°à«€ àª¨àªœà«€àª•àª¨àª¾ à«§à«¦à«¦% àª¸à«àª—àª® àª¸à«àª¥àª¾àª¨à«‹ àª…àª¨à«‡ àª¸à«àª®àª¾àª°à«àªŸ àªªà«àª°àªµà«‡àª¶àª¦à«àªµàª¾àª°à«‹ àª¶à«‹àª§à«‹",
+        hero_subtitle: "àªµà«àª¹à«€àª²àªšà«‡àª° àªµàªªàª°àª¾àª¶àª•àª°à«àª¤àª¾àª“ àª…àª¨à«‡ àªµàª°àª¿àª·à«àª  àª¨àª¾àª—àª°àª¿àª•à«‹ àª®àª¾àªŸà«‡ àª­àª¾àª°àª¤àª¨à«àª‚ àª…àª—à«àª°àª£à«€ àªªà«àª²à«‡àªŸàª«à«‹àª°à«àª®.",
+        btn_search: "àª¶à«‹àª§à«‹",
+        interactive_map: "àª¸à«àª—àª®àª¤àª¾ àª¨àª•àª¶à«‹",
+        a11y_tools: "WCAG àª¸àª¾àª§àª¨à«‹:",
+        nav_home: "àª®à«àª–à«àª¯ àªªà«ƒàª·à«àª ",
+        nav_categories: "àª¶à«àª°à«‡àª£à«€àª“",
+        nav_search: "àª¸à«àª¥àª¾àª¨à«‹ àª¶à«‹àª§à«‹",
+        nav_route: "àª¸à«àª—àª® àª®àª¾àª°à«àª—",
+        nav_owner: "àª¬àª¿àªàª¨à«‡àª¸ àªªà«‹àª°à«àªŸàª²",
+        nav_admin: "àªàª¡àª®àª¿àª¨",
+        my_profile: "àª®àª¾àª°à«€ àªªà«àª°à«‹àª«àª¾àª‡àª²"
+      },
+      bn: {
+        hero_title: "à¦†à¦ªà¦¨à¦¾à¦° à¦¨à¦¿à¦•à¦Ÿà¦¬à¦°à§à¦¤à§€ à§§à§¦à§¦% à¦…à§à¦¯à¦¾à¦•à§à¦¸à§‡à¦¸à¦¯à§‹à¦—à§à¦¯ à¦¸à§à¦¥à¦¾à¦¨ à¦…à¦¨à§à¦¸à¦¨à§à¦§à¦¾à¦¨ à¦•à¦°à§à¦¨",
+        hero_subtitle: "à¦¹à§à¦‡à¦²à¦šà§‡à¦¯à¦¼à¦¾à¦° à¦¬à§à¦¯à¦¬à¦¹à¦¾à¦°à¦•à¦¾à¦°à§€ à¦“ à¦ªà§à¦°à¦¬à§€à¦£ à¦¨à¦¾à¦—à¦°à¦¿à¦•à¦¦à§‡à¦° à¦œà¦¨à§à¦¯ à¦­à¦¾à¦°à¦¤à§‡à¦° à¦‡à¦‰à¦¨à¦¿à¦­à¦¾à¦°à§à¦¸à¦¾à¦² à¦ªà§à¦²à§à¦¯à¦¾à¦Ÿà¦«à¦°à§à¦®à¥¤",
+        btn_search: "à¦¸à¦¨à§à¦§à¦¾à¦¨ à¦•à¦°à§à¦¨",
+        interactive_map: "à¦…à§à¦¯à¦¾à¦•à§à¦¸à§‡à¦¸à¦¿à¦¬à¦¿à¦²à¦¿à¦Ÿà¦¿ à¦®à§à¦¯à¦¾à¦ª",
+        a11y_tools: "WCAG à¦Ÿà§à¦²à¦•à¦¿à¦Ÿ:",
+        nav_home: "à¦¹à§‹à¦®",
+        nav_categories: "à¦•à§à¦¯à¦¾à¦Ÿà¦¾à¦—à¦°à¦¿",
+        nav_search: "à¦¸à§à¦¥à¦¾à¦¨ à¦–à§à¦à¦œà§à¦¨",
+        nav_route: "à¦¸à¦¹à¦œ à¦ªà¦¥",
+        nav_owner: "à¦¬à¦¿à¦œà¦¨à§‡à¦¸ à¦ªà§‹à¦°à§à¦Ÿà¦¾à¦²",
+        nav_admin: "à¦à¦¡à¦®à¦¿à¦¨",
+        my_profile: "à¦†à¦®à¦¾à¦° à¦ªà§à¦°à§‹à¦«à¦¾à¦‡à¦²"
+      },
+      pa: {
+        hero_title: "à¨†à¨ªà¨£à©‡ à¨¨à©‡à©œà©‡ 100% à¨ªà¨¹à©à©°à¨šà¨¯à©‹à¨— à¨¸à¨¥à¨¾à¨¨ à¨²à©±à¨­à©‹",
+        hero_subtitle: "à¨µà©€à¨²à©à¨¹à¨šà©‡à¨…à¨° à¨µà¨°à¨¤à©‹à¨‚à¨•à¨¾à¨°à¨¾à¨‚ à¨…à¨¤à©‡ à¨¬à¨œà¨¼à©à¨°à¨—à¨¾à¨‚ à¨²à¨ˆ à¨­à¨¾à¨°à¨¤ à¨¦à¨¾ à¨ªà©à¨°à¨®à©à©±à¨– à¨®à©°à¨šà¥¤",
+        btn_search: "à¨–à©‹à¨œà©‹",
+        interactive_map: "à¨¨à¨•à¨¸à¨¼à¨¾",
+        a11y_tools: "WCAG à¨Ÿà©‚à¨²:",
+        nav_home: "à¨®à©à©±à¨– à¨ªà©°à¨¨à¨¾",
+        nav_categories: "à¨¸à¨¼à©à¨°à©‡à¨£à©€à¨†à¨‚",
+        nav_search: "à¨¥à¨¾à¨‚à¨µà¨¾à¨‚ à¨–à©‹à¨œà©‹",
+        nav_route: "à¨¸à©à¨–à¨¾à¨²à¨¾ à¨°à¨¸à¨¤à¨¾",
+        nav_owner: "à¨•à¨¾à¨°à©‹à¨¬à¨¾à¨°à©€ à¨ªà©‹à¨°à¨Ÿà¨²",
+        nav_admin: "à¨à¨¡à¨®à¨¿à¨¨",
+        my_profile: "à¨®à©‡à¨°à©€ à¨ªà©à¨°à©‹à¨«à¨¾à¨ˆà¨²"
+      },
+      ur: {
+        hero_title: "Ø§Ù¾Ù†Û’ Ù‚Ø±ÛŒØ¨ 100% Ù‚Ø§Ø¨Ù„ Ø±Ø³Ø§Ø¦ÛŒ Ù…Ù‚Ø§Ù…Ø§Øª ØªÙ„Ø§Ø´ Ú©Ø±ÛŒÚº",
+        hero_subtitle: "ÙˆÛŒÙ„ Ú†ÛŒØ¦Ø± ØµØ§Ø±ÙÛŒÙ† Ø§ÙˆØ± Ø¨Ø²Ø±Ú¯ Ø´ÛØ±ÛŒÙˆÚº Ú©Û’ Ù„ÛŒÛ’ ÛÙ†Ø¯ÙˆØ³ØªØ§Ù† Ú©Ø§ Ø¨ÛØªØ±ÛŒÙ† Ù¾Ù„ÛŒÙ¹ ÙØ§Ø±Ù…Û”",
+        btn_search: "ØªÙ„Ø§Ø´ Ú©Ø±ÛŒÚº",
+        interactive_map: "Ù†Ù‚Ø´Û",
+        a11y_tools: "WCAG Ù¹ÙˆÙ„Ø²:",
+        nav_home: "ÛÙˆÙ…",
+        nav_categories: "Ø²Ù…Ø±Û Ø¬Ø§Øª",
+        nav_search: "Ù…Ù‚Ø§Ù…Ø§Øª ØªÙ„Ø§Ø´ Ú©Ø±ÛŒÚº",
+        nav_route: "Ø¢Ø³Ø§Ù† Ø±Ø§Ø³ØªÛ",
+        nav_owner: "Ø¨Ø²Ù†Ø³ Ù¾ÙˆØ±Ù¹Ù„",
+        nav_admin: "Ø§ÛŒÚˆÙ…Ù†",
+        my_profile: "Ù…ÛŒØ±Ø§ Ù¾Ø±ÙˆÙØ§Ø¦Ù„"
+      },
+      sa: {
+        hero_title: "à¤¸à¤®à¥€à¤ªà¥‡ à¥§à¥¦à¥¦% à¤¸à¥à¤—à¤®à¤¸à¥à¤¥à¤¾à¤¨à¤¾à¤¨à¤¿ à¤…à¤¨à¥à¤µà¤¿à¤·à¤¨à¥à¤¤à¥",
+        hero_subtitle: "à¤µà¥à¤¹à¥€à¤²à¤šà¥‡à¤¯à¤°-à¤‰à¤ªà¤¯à¥‹à¤•à¥à¤¤à¥ƒà¤­à¥à¤¯à¤ƒ à¤¸à¤°à¥à¤µà¥‡à¤­à¥à¤¯à¤ƒ à¤š à¤­à¤¾à¤°à¤¤à¤¸à¥à¤¯ à¤¸à¥à¤—à¤®à¤¤à¤¾à¤ªà¤Ÿà¤²à¤®à¥à¥¤",
+        btn_search: "à¤…à¤¨à¥à¤µà¤¿à¤·à¤¤à¥",
+        interactive_map: "à¤¸à¥à¤—à¤®à¤®à¤¾à¤¨à¤šà¤¿à¤¤à¥à¤°à¤®à¥",
+        a11y_tools: "WCAG à¤‰à¤ªà¤•à¤°à¤£à¤¾à¤¨à¤¿:",
+        nav_home: "à¤®à¥à¤–à¥à¤¯à¤ªà¥ƒà¤·à¥à¤ à¤®à¥",
+        nav_categories: "à¤µà¤°à¥à¤—à¤¾à¤ƒ",
+        nav_search: "à¤¸à¥à¤¥à¤¾à¤¨à¤®à¤¨à¥à¤µà¤¿à¤·à¤¤à¥",
+        nav_route: "à¤¸à¥à¤—à¤®à¤®à¤¾à¤°à¥à¤—à¤ƒ",
+        nav_owner: "à¤µà¤¾à¤£à¤¿à¤œà¥à¤¯à¤ªà¤Ÿà¤²à¤®à¥",
+        nav_admin: "à¤ªà¥à¤°à¤¶à¤¾à¤¸à¤•à¤ƒ",
+        my_profile: "à¤®à¤® à¤µà¤¿à¤µà¤°à¤£à¤®à¥"
+      }
+    };
 
     let homeMap = null;
     let mapMarkers = [];
@@ -638,6 +1081,21 @@
           window.speechSynthesis.speak(u);
         }
       };
+
+      document.getElementById('lang-select').onchange = (e) => {
+        const lang = e.target.value;
+        applyLanguage(lang);
+      };
+    }
+
+    function applyLanguage(lang) {
+      const dict = i18n[lang] || i18n['en'];
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (dict[key]) {
+          el.innerText = dict[key];
+        }
+      });
     }
 
     function switchView(vId) {
@@ -651,7 +1109,7 @@
     function initHomeMap() {
       const container = document.getElementById('home-map');
       if (!container) return;
-      homeMap = L.map('home-map').setView([12.9759, 77.6964], 11);
+      homeMap = L.map('home-map').setView([18.9400, 72.8353], 5);
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(homeMap);
       updateMarkers(mockBusinesses);
     }
@@ -664,7 +1122,7 @@
 
       places.forEach(p => {
         const marker = L.marker([p.latitude, p.longitude]).addTo(homeMap);
-        marker.bindPopup(`<b>${p.name}</b><br>Accessibility Score: ${p.accessibility_score}/100<br><button onclick="loadDetail(${p.id})">View</button>`);
+        marker.bindPopup(`<b>${p.name}</b><br>${p.category} &bull; ${p.city}<br>Accessibility Score: ${p.accessibility_score}/100<br><button onclick="loadDetail(${p.id})">View Profile</button>`);
         bounds.extend([p.latitude, p.longitude]);
         mapMarkers.push(marker);
       });
@@ -675,13 +1133,17 @@
     function renderHomeList(places) {
       const container = document.getElementById('home-places-list');
       document.getElementById('places-count').innerText = places.length;
+      if (places.length === 0) {
+        container.innerHTML = `<div style="padding:1.5rem; text-align:center; color:var(--text-muted);">No verified places found in this city yet. Try selecting All Metros.</div>`;
+        return;
+      }
       container.innerHTML = places.map(p => `
         <div class="place-card glass-panel" onclick="loadDetail(${p.id})">
           <div class="place-card-header">
             <strong>${p.name}</strong>
             <span class="score-badge green">${p.accessibility_score}/100</span>
           </div>
-          <small class="text-muted">${p.category} &bull; ${p.city}</small>
+          <small class="text-muted"><i class="fa-solid fa-tag"></i> ${p.category} &bull; <i class="fa-solid fa-city"></i> ${p.city}</small>
         </div>
       `).join('');
     }
@@ -705,6 +1167,14 @@
     }
 
     function renderCategories() {
+      const categoriesList = [
+        { name: 'Restaurants', icon: 'fa-utensils', count: '1,240+ Places' },
+        { name: 'Shopping Malls', icon: 'fa-bag-shopping', count: '380+ Malls' },
+        { name: 'Hospitals', icon: 'fa-hospital', count: '850+ Hospitals' },
+        { name: 'Airports', icon: 'fa-plane-departure', count: '45 Terminals' },
+        { name: 'Railway Stations', icon: 'fa-train', count: '210+ Stations' },
+        { name: 'Parks', icon: 'fa-tree', count: '310+ Parks' }
+      ];
       const container = document.getElementById('categories-grid');
       container.innerHTML = categoriesList.map(c => `
         <div class="cat-card glass-panel" onclick="searchCat('${c.name}')">
@@ -731,14 +1201,27 @@
       renderSearchGrid(filtered);
     }
 
+    function resetAdvancedFilters() {
+      document.getElementById('filter-city').value = '';
+      document.getElementById('filter-category').value = '';
+      renderSearchGrid(mockBusinesses);
+    }
+
     function renderSearchGrid(places) {
       const container = document.getElementById('search-results-grid');
-      document.getElementById('results-summary').innerText = `Showing ${places.length} places`;
+      document.getElementById('results-summary').innerText = `Showing ${places.length} verified places`;
+      if (places.length === 0) {
+        container.innerHTML = `<div style="padding:2rem; text-align:center; color:var(--text-muted); grid-column: 1/-1;">No places match your search filter criteria. Try resetting filters.</div>`;
+        return;
+      }
       container.innerHTML = places.map(p => `
         <div class="place-card glass-panel" onclick="loadDetail(${p.id})">
-          <h4>${p.name}</h4>
-          <p>${p.address}</p>
-          <button class="btn btn-sm btn-primary mt-2">View Profile</button>
+          <div class="place-card-header">
+            <h4>${p.name}</h4>
+            <span class="score-badge green">${p.accessibility_score}/100</span>
+          </div>
+          <p style="font-size:0.85rem; color:var(--text-muted); margin:0.5rem 0;">${p.address}, ${p.city}</p>
+          <button class="btn btn-sm btn-primary mt-2"><i class="fa-solid fa-door-open"></i> View Smart Profile</button>
         </div>
       `).join('');
     }
@@ -750,22 +1233,28 @@
       const recEnt = b.entrances[0] || { name: 'Main Gate', notes: 'Ramp and automatic door available.' };
 
       container.innerHTML = `
-        <div class="glass-panel p-4 mb-4">
-          <h1>${b.name}</h1>
-          <p>${b.address}, ${b.city}</p>
-          <div class="score-badge green" style="display:inline-block; font-size:1.2rem; margin-top:0.5rem;">Score: ${b.accessibility_score} / 100</div>
+        <div class="glass-panel p-4 mb-4" style="padding:1.5rem;">
+          <h1 style="font-size:1.8rem;">${b.name}</h1>
+          <p style="color:var(--text-muted);"><i class="fa-solid fa-location-dot"></i> ${b.address}, ${b.city}, ${b.state} - ${b.pincode}</p>
+          <p style="color:var(--text-muted);"><i class="fa-solid fa-clock"></i> Hours: ${b.opening_hours} - ${b.closing_hours} | <i class="fa-solid fa-phone"></i> ${b.phone}</p>
+          <div class="score-badge green" style="display:inline-block; font-size:1.1rem; margin-top:0.5rem; padding:6px 14px;">Accessibility Score: ${b.accessibility_score} / 100</div>
         </div>
 
         <div class="smart-entrance-card mb-4">
-          <h3><i class="fa-solid fa-door-open"></i> Recommended Entrance: ${recEnt.name}</h3>
-          <p>${recEnt.notes}</p>
+          <h3><i class="fa-solid fa-door-open"></i> Recommended Entrance: <strong>${recEnt.name}</strong></h3>
+          <p style="margin-top:0.5rem;">${recEnt.notes}</p>
         </div>
 
-        <div class="glass-panel p-4 mb-4">
-          <h3>22 Accessibility Features Matrix</h3>
-          <ul>
-            ${b.features.map(f => `<li><strong>${f.feature_name}:</strong> ${f.details}</li>`).join('')}
-          </ul>
+        <div class="glass-panel p-4 mb-4" style="padding:1.5rem;">
+          <h3 style="margin-bottom:1rem;">22 Granular Accessibility Features Matrix</h3>
+          <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap:10px;">
+            ${b.features.map(f => `
+              <div style="background:var(--bg-main); padding:10px; border-radius:10px; border:1px solid var(--border-color);">
+                <strong style="color:var(--status-green);">&#10004; ${f.feature_name}:</strong>
+                <div style="font-size:0.8rem; color:var(--text-muted);">${f.details}</div>
+              </div>
+            `).join('')}
+          </div>
         </div>
       `;
       switchView('detail');
@@ -775,9 +1264,10 @@
       const box = document.getElementById('route-summary-box');
       box.style.display = 'block';
       box.innerHTML = `
-        <h4 style="color:var(--status-green);">Step-Free Route Calculated!</h4>
-        <p>1. Exit Concourse via Step-Free Ramp</p>
-        <p>2. Follow Tactile Path to Elevator E-1</p>
+        <h4 style="color:var(--status-green);"><i class="fa-solid fa-circle-check"></i> Step-Free Route Generated!</h4>
+        <p>1. Exit Concourse via Step-Free Ramp (150m)</p>
+        <p>2. Follow Tactile Path along Link Corridor (80m)</p>
+        <p>3. Take Elevator E-1 to Destination Entrance (45m)</p>
       `;
     }
 
@@ -803,8 +1293,9 @@
       input.value = '';
 
       setTimeout(() => {
-        let reply = 'AccessIndia AI Assistant: North Gate Ramp is the recommended step-free entrance for wheelchair users.';
+        let reply = 'AccessIndia AI Assistant: Recommended entrance gate is North Gate Ramp. Elevators, tactile paving, and accessible restrooms are verified.';
         if (txt.toLowerCase().includes('hospital')) reply = 'AIIMS Delhi Trauma Block has a zero-step entrance with wheelchairs stationed at the gate.';
+        if (txt.toLowerCase().includes('mumbai') || txt.toLowerCase().includes('csmt')) reply = 'CSMT Station Mumbai Platform 1 concourse is level and ramp accessible.';
         box.innerHTML += `<div class="message bot-msg"><div class="msg-bubble">${reply}</div></div>`;
         box.scrollTop = box.scrollHeight;
       }, 500);
