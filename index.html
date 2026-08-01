@@ -605,6 +605,9 @@
   <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 
+  <!-- Deployment config for Cloudflare Pages / local dev -->
+  <script src="./config.js"></script>
+
   <!-- FRONTEND CONTROLLER & ALL DASHBOARD LOGIC -->
   <script>
     let homeMap = null;
@@ -615,6 +618,7 @@
     let currentFontSize = 'normal';
     let currentLanguage = 'en';
     let routePolyline = null;
+    const API_BASE_URL = (window.API_BASE_URL || '').replace(/\/$/, '');
 
     const cityCoords = {
       Pune: [18.5204, 73.8567],
@@ -817,6 +821,10 @@
       });
     }
 
+    function apiPath(path) {
+      return API_BASE_URL ? `${API_BASE_URL}${path}` : path;
+    }
+
     function getReadableLabel(el) {
       if (!el) return '';
       return (
@@ -830,7 +838,7 @@
     }
 
     function verifyBackend() {
-      fetch('/api/health')
+      fetch(apiPath('/api/health'))
         .then(response => response.ok ? response.json() : Promise.reject(new Error('offline')))
         .then(data => {
           const statusText = data.database && data.database.includes('Connected') ? 'Live PostgreSQL DB & Natural AI Active' : 'Frontend fallback mode';
@@ -898,7 +906,7 @@
     async function fetchPlaces(params) {
       const query = new URLSearchParams(params);
       try {
-        const response = await fetch(`/api/businesses?${query.toString()}`);
+        const response = await fetch(apiPath(`/api/businesses?${query.toString()}`));
         if (!response.ok) throw new Error('backend unavailable');
         const data = await response.json();
         return Array.isArray(data) ? data : [];
@@ -1109,7 +1117,7 @@
       if (category) params.set('category', category);
 
       try {
-        const response = await fetch(`/api/businesses?${params.toString()}`);
+        const response = await fetch(apiPath(`/api/businesses?${params.toString()}`));
         if (response.ok) {
           const data = await response.json();
           if (Array.isArray(data) && data.length) {
@@ -1328,7 +1336,7 @@
 
       let reply = '';
       try {
-        const response = await fetch('/api/ai/chat', {
+        const response = await fetch(apiPath('/api/ai/chat'), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ message: text, language: currentLanguage })
@@ -1395,7 +1403,7 @@
       const city = document.getElementById('new-city')?.value || '';
 
       try {
-        await fetch('/api/businesses', {
+        await fetch(apiPath('/api/businesses'), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ name, category, city, accessibility_score: 96 })
@@ -1415,7 +1423,7 @@
 
       resultBox.innerHTML = `<span style="color:#00ff00;">[AI Vision] Running object detection on CCTV stream... <i class="fa-solid fa-spinner fa-spin"></i></span>`;
 
-      fetch(`/api/businesses/${businessId}/parking/cctv-analyze`, { method: 'POST' })
+      fetch(apiPath(`/api/businesses/${businessId}/parking/cctv-analyze`), { method: 'POST' })
         .then(response => response.ok ? response.json() : Promise.reject(new Error('offline')))
         .then(data => {
           resultBox.innerHTML = `
