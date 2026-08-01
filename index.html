@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light" data-contrast="normal">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AccessIndia AI – Universal Accessibility & Smart Facility Discovery Platform</title>
+  <meta name="description" content="AI-powered accessibility and smart facility discovery platform across India. Discover wheelchair ramps, tactile paving, Braille lifts, accessible restrooms, EV charging, smart entrance recommendations, and indoor navigation.">
+
+  <!-- Google Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Leaflet CSS for Interactive Maps -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+
+  <!-- AccessIndia Styles (Relative Path for GitHub Pages Compatibility) -->
+  <link rel="stylesheet" href="./css/styles.css">
+</head>
+<body>
+
+  <!-- WCAG 2.2 AA Skip Navigation Link -->
+  <a href="#main-content" class="skip-link" tabIndex="0">Skip to Main Content</a>
+
+  <!-- WCAG Accessibility & Multilingual Bar -->
+  <aside class="wcag-toolbar" aria-label="Accessibility and Language Settings">
+    <div class="container wcag-container">
+      <div class="wcag-group">
+        <span class="wcag-label"><i class="fa-solid fa-universal-access" aria-hidden="true"></i> <strong data-i18n="a11y_tools">WCAG 2.2 Toolkit:</strong></span>
+        <button id="btn-contrast" class="wcag-btn" aria-label="Toggle High Contrast Mode" title="High Contrast Mode"><i class="fa-solid fa-circle-half-stroke" aria-hidden="true"></i> High Contrast</button>
+        <button id="btn-theme" class="wcag-btn" aria-label="Toggle Dark Mode" title="Toggle Dark/Light Mode"><i class="fa-solid fa-moon" aria-hidden="true"></i> <span id="theme-text">Dark Mode</span></button>
+        <div class="text-sizer" role="group" aria-label="Text Size Controls">
+          <button id="btn-font-dec" class="wcag-btn" aria-label="Decrease Font Size" title="Decrease Font Size">A-</button>
+          <button id="btn-font-reset" class="wcag-btn" aria-label="Reset Font Size" title="Reset Font Size">A</button>
+          <button id="btn-font-inc" class="wcag-btn" aria-label="Increase Font Size" title="Increase Font Size">A+</button>
+        </div>
+        <button id="btn-tts" class="wcag-btn" aria-label="Read Page Out Loud" title="Text-to-Speech Output"><i class="fa-solid fa-volume-high" aria-hidden="true"></i> <span id="tts-label">Read Page</span></button>
+        <button id="btn-motion" class="wcag-btn" aria-label="Toggle Reduced Motion" title="Reduced Motion"><i class="fa-solid fa-person-walking" aria-hidden="true"></i> Motion: Normal</button>
+      </div>
+
+      <div class="language-selector-group">
+        <label for="lang-select" class="sr-only">Select Preferred Language</label>
+        <i class="fa-solid fa-language" aria-hidden="true"></i>
+        <select id="lang-select" class="lang-select" aria-label="Select Language (23 Indian Languages)">
+          <option value="en" selected>English</option>
+          <option value="hi">हिंदी (Hindi)</option>
+          <option value="ta">தமிழ் (Tamil)</option>
+          <option value="te">తెలుగు (Telugu)</option>
+          <option value="kn">ಕನ್ನಡ (Kannada)</option>
+          <option value="ml">മലയാളം (Malayalam)</option>
+          <option value="mr">मराठी (Marathi)</option>
+          <option value="gu">ગુજરાતી (Gujarati)</option>
+          <option value="pa">ਪੰਜਾਬੀ (Punjabi)</option>
+          <option value="bn">বাংলা (Bengali)</option>
+          <option value="or">ଓଡ଼ିଆ (Odia)</option>
+          <option value="ur">اردو (Urdu)</option>
+          <option value="as">অসমীয়া (Assamese)</option>
+          <option value="kok">कोंकणी (Konkani)</option>
+          <option value="ne">नेपाली (Nepali)</option>
+          <option value="doi">डोगरी (Dogri)</option>
+          <option value="sd">सिन्धी (Sindhi)</option>
+          <option value="mai">मैथिली (Maithili)</option>
+          <option value="sat">संथाली (Santali)</option>
+          <option value="mni">মৈতৈলোন্ (Manipuri)</option>
+          <option value="brx">बड़ो (Bodo)</option>
+          <option value="ks">कश्मीरी (Kashmiri)</option>
+          <option value="sa">संस्कृतम् (Sanskrit)</option>
+        </select>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Top Main Navigation Bar -->
+  <header class="navbar-header">
+    <div class="container navbar-container">
+      <a href="#" class="brand-logo" onclick="switchView('home'); return false;" aria-label="AccessIndia AI Home">
+        <div class="logo-icon"><i class="fa-solid fa-wheelchair-move"></i></div>
+        <div class="logo-text">
+          <span class="brand-name">AccessIndia <span class="brand-ai">AI</span></span>
+          <span class="brand-tagline">Universal Accessibility Platform</span>
+        </div>
+      </a>
+
+      <nav class="nav-links" aria-label="Main Navigation">
+        <a href="#home" class="nav-link active" onclick="switchView('home'); return false;"><i class="fa-solid fa-house"></i> <span data-i18n="nav_home">Home</span></a>
+        <a href="#categories" class="nav-link" onclick="switchView('categories'); return false;"><i class="fa-solid fa-layer-group"></i> <span data-i18n="nav_categories">Categories</span></a>
+        <a href="#search" class="nav-link" onclick="switchView('search'); return false;"><i class="fa-solid fa-magnifying-glass"></i> <span data-i18n="nav_search">Search Places</span></a>
+        <a href="#route" class="nav-link" onclick="switchView('route'); return false;"><i class="fa-solid fa-route"></i> <span data-i18n="nav_route">Accessible Route</span></a>
+        <a href="#owner" class="nav-link" onclick="switchView('owner'); return false;"><i class="fa-solid fa-store"></i> <span data-i18n="nav_owner">Business Portal</span></a>
+        <a href="#admin" class="nav-link" onclick="switchView('admin'); return false;"><i class="fa-solid fa-user-shield"></i> <span data-i18n="nav_admin">Admin</span></a>
+      </nav>
+
+      <div class="nav-user-actions">
+        <button class="btn btn-outline" id="btn-user-dash" onclick="switchView('user')"><i class="fa-solid fa-user-gear"></i> <span data-i18n="my_profile">My Profile</span></button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT CONTAINER -->
+  <main id="main-content" class="main-content" tabIndex="-1">
+
+    <!-- VIEW 1: HOME PAGE -->
+    <section id="view-home" class="app-view active">
+      <!-- Hero Section -->
+      <div class="hero-section">
+        <div class="container hero-container">
+          <div class="hero-content">
+            <span class="hero-badge"><i class="fa-solid fa-wand-magic-sparkles"></i> AI-Powered Inclusive India</span>
+            <h1 class="hero-title" data-i18n="hero_title">Discover 100% Accessible Places & Smart Entrances Near You</h1>
+            <p class="hero-subtitle" data-i18n="hero_subtitle">Empowering wheelchair users, senior citizens, visually impaired, and families across India with verified step-free routes, CCTV parking AI, and indoor navigation.</p>
+
+            <!-- Search Bar -->
+            <div class="search-box-hero">
+              <i class="fa-solid fa-magnifying-glass search-icon"></i>
+              <input type="text" id="hero-search-input" placeholder="e.g. Wheelchair accessible hospital in Delhi, Mall with feeding room..." aria-label="Search accessible places">
+              <button class="voice-search-btn" id="btn-voice-search" aria-label="Voice Search" title="Voice Search (Speech-to-text)"><i class="fa-solid fa-microphone"></i></button>
+              <button class="btn btn-primary" onclick="handleHeroSearch()"><i class="fa-solid fa-arrow-right"></i> <span data-i18n="btn_search">Search</span></button>
+            </div>
+
+            <!-- Quick Filter Tags -->
+            <div class="hero-tags" role="group" aria-label="Quick Category Filters">
+              <span class="tag-label">Popular Searches:</span>
+              <button class="chip-tag" onclick="quickSearchCategory('Hospitals')"><i class="fa-solid fa-hospital"></i> Hospitals</button>
+              <button class="chip-tag" onclick="quickSearchCategory('Shopping Malls')"><i class="fa-solid fa-bag-shopping"></i> Shopping Malls</button>
+              <button class="chip-tag" onclick="quickSearchCategory('Restaurants')"><i class="fa-solid fa-utensils"></i> Restaurants</button>
+              <button class="chip-tag" onclick="quickSearchCategory('EV Charging Stations')"><i class="fa-solid fa-charging-station"></i> EV Charging</button>
+              <button class="chip-tag" onclick="quickSearchCategory('Railway Stations')"><i class="fa-solid fa-train"></i> Railway Stations</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Interactive Discovery Hub: Map + List Split View -->
+      <div class="container discovery-container">
+        <div class="discovery-header">
+          <div>
+            <h2 class="section-title"><i class="fa-solid fa-map-location-dot"></i> <span data-i18n="interactive_map">Interactive Accessibility Map & Facility Finder</span></h2>
+            <p class="section-desc">Real-time status indicators (Green: Fully Accessible, Orange: Assisted, Red: Limited)</p>
+          </div>
+          <div class="city-selector">
+            <label for="city-filter-home"><i class="fa-solid fa-city"></i> City:</label>
+            <select id="city-filter-home" onchange="filterHomeCity(this.value)">
+              <option value="">All Metros (India)</option>
+              <option value="Bengaluru">Bengaluru</option>
+              <option value="Delhi">Delhi</option>
+              <option value="Mumbai">Mumbai</option>
+              <option value="Chennai">Chennai</option>
+              <option value="Hyderabad">Hyderabad</option>
+              <option value="Kolkata">Kolkata</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="map-split-layout">
+          <!-- Interactive Leaflet Map -->
+          <div class="map-card glass-panel">
+            <div id="home-map" class="map-view-container" aria-label="Interactive Map of Accessible Places"></div>
+            <div class="map-legend">
+              <span class="legend-item"><span class="badge-dot green"></span> 90-100 (Fully Accessible)</span>
+              <span class="legend-item"><span class="badge-dot orange"></span> 70-89 (Assisted)</span>
+              <span class="legend-item"><span class="badge-dot red"></span> &lt;70 (Limited)</span>
+            </div>
+          </div>
+
+          <!-- Places Listing Sidebar -->
+          <div class="places-sidebar">
+            <div class="sidebar-title-bar">
+              <h3><i class="fa-solid fa-compass"></i> Verified Nearby Places (<span id="places-count">0</span>)</h3>
+              <button class="btn btn-sm btn-outline" onclick="switchView('search')">View All</button>
+            </div>
+
+            <div id="home-places-list" class="places-card-list">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Feature Highlight Spotlight -->
+      <div class="container highlight-section">
+        <div class="grid grid-3">
+          <div class="feature-spotlight-card glass-panel">
+            <div class="spotlight-icon"><i class="fa-solid fa-door-open"></i></div>
+            <h3>Smart Entrance Recommendation</h3>
+            <p>Don't get stuck at stairs. AccessIndia AI calculates the exact ramp slope, door clearance, and walking distance to direct you to the optimal entrance gate.</p>
+          </div>
+          <div class="feature-spotlight-card glass-panel">
+            <div class="spotlight-icon"><i class="fa-solid fa-video"></i></div>
+            <h3>CCTV Parking AI Occupancy</h3>
+            <p>Our vision model analyzes live CCTV feeds to show real-time accessible parking spot availability before you arrive at the facility.</p>
+          </div>
+          <div class="feature-spotlight-card glass-panel">
+            <div class="spotlight-icon"><i class="fa-solid fa-route"></i></div>
+            <h3>Indoor & Step-Free Route Planner</h3>
+            <p>Seamlessly navigate through multi-level facilities from parking bays to elevators, braille rest rooms, and food court kiosks.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 2: CATEGORIES PAGE -->
+    <section id="view-categories" class="app-view">
+      <div class="container">
+        <div class="view-header">
+          <h2><i class="fa-solid fa-layer-group"></i> Explore Accessibility by Category</h2>
+          <p>Filter places based on specialized facility requirements</p>
+        </div>
+
+        <div id="categories-grid" class="categories-grid">
+          <!-- 15 Granular Categories dynamically populated -->
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 3: SEARCH & MULTI-FILTER PAGE -->
+    <section id="view-search" class="app-view">
+      <div class="container">
+        <div class="view-header">
+          <h2><i class="fa-solid fa-filter"></i> Advanced Accessibility Search</h2>
+          <p>Find businesses matching specific accessibility standards</p>
+        </div>
+
+        <div class="search-page-layout">
+          <!-- Filter Panel -->
+          <aside class="filter-panel glass-panel">
+            <h3><i class="fa-solid fa-sliders"></i> Filter Criteria</h3>
+
+            <div class="filter-group">
+              <label for="filter-city">City</label>
+              <select id="filter-city" class="input-control">
+                <option value="">All Cities</option>
+                <option value="Bengaluru">Bengaluru</option>
+                <option value="Delhi">Delhi</option>
+                <option value="Mumbai">Mumbai</option>
+                <option value="Chennai">Chennai</option>
+                <option value="Hyderabad">Hyderabad</option>
+                <option value="Kolkata">Kolkata</option>
+              </select>
+            </div>
+
+            <div class="filter-group">
+              <label for="filter-category">Category</label>
+              <select id="filter-category" class="input-control">
+                <option value="">All Categories</option>
+                <option value="Restaurants">Restaurants</option>
+                <option value="Shopping Malls">Shopping Malls</option>
+                <option value="Hospitals">Hospitals</option>
+                <option value="Hotels">Hotels</option>
+                <option value="EV Charging Stations">EV Charging Stations</option>
+                <option value="Petrol Bunks">Petrol Bunks</option>
+                <option value="Railway Stations">Railway Stations</option>
+                <option value="Airports">Airports</option>
+                <option value="Parks">Parks</option>
+                <option value="Banks">Banks</option>
+                <option value="Pharmacies">Pharmacies</option>
+              </select>
+            </div>
+
+            <div class="filter-group">
+              <label for="filter-min-score">Minimum Accessibility Score (0 - 100)</label>
+              <input type="range" id="filter-min-score" min="50" max="100" value="70" oninput="document.getElementById('score-val').innerText = this.value">
+              <div class="range-val">Score &ge; <span id="score-val">70</span> / 100</div>
+            </div>
+
+            <div class="filter-group">
+              <label>Mandatory Features</label>
+              <div class="checkbox-list">
+                <label><input type="checkbox" class="feature-chk" value="Wheelchair Ramp"> Wheelchair Ramp</label>
+                <label><input type="checkbox" class="feature-chk" value="Elevator"> Elevator / Lift</label>
+                <label><input type="checkbox" class="feature-chk" value="Braille Lift Buttons"> Braille Buttons</label>
+                <label><input type="checkbox" class="feature-chk" value="Accessible Restroom"> Accessible Restroom</label>
+                <label><input type="checkbox" class="feature-chk" value="Accessible Parking"> Accessible Parking</label>
+                <label><input type="checkbox" class="feature-chk" value="Tactile Paving"> Tactile Paving</label>
+                <label><input type="checkbox" class="feature-chk" value="Feeding Room"> Feeding Room</label>
+              </div>
+            </div>
+
+            <button class="btn btn-primary btn-block" onclick="applyAdvancedFilters()"><i class="fa-solid fa-filter"></i> Apply Filters</button>
+            <button class="btn btn-outline btn-block" onclick="resetAdvancedFilters()"><i class="fa-solid fa-rotate-left"></i> Reset</button>
+          </aside>
+
+          <!-- Search Results List -->
+          <main class="results-panel">
+            <div class="results-header">
+              <div id="results-summary">Showing 0 places</div>
+              <div class="sort-control">
+                <label for="sort-by">Sort By:</label>
+                <select id="sort-by" onchange="sortSearchResults(this.value)">
+                  <option value="score">Accessibility Score (High to Low)</option>
+                  <option value="rating">Rating (High to Low)</option>
+                  <option value="name">Name (A-Z)</option>
+                </select>
+              </div>
+            </div>
+
+            <div id="search-results-grid" class="search-grid">
+              <!-- Dynamically populated search cards -->
+            </div>
+          </main>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 4: BUSINESS PROFILE DETAIL PAGE -->
+    <section id="view-detail" class="app-view">
+      <div class="container">
+        <button class="btn btn-outline back-btn" onclick="switchView('home')"><i class="fa-solid fa-arrow-left"></i> Back to Discovery</button>
+
+        <div id="detail-content" class="detail-container">
+          <!-- Dynamically populated business profile details -->
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 5: ACCESSIBLE ROUTE PLANNER -->
+    <section id="view-route" class="app-view">
+      <div class="container">
+        <div class="view-header">
+          <h2><i class="fa-solid fa-route"></i> Step-Free Accessibility Route Planner</h2>
+          <p>Generate color-coded accessible paths (Green: Fully Accessible, Yellow: Partial, Red: Inaccessible)</p>
+        </div>
+
+        <div class="route-planner-layout">
+          <div class="route-control-card glass-panel">
+            <div class="form-group">
+              <label for="route-from"><i class="fa-solid fa-location-dot color-green"></i> From (Start Location)</label>
+              <input type="text" id="route-from" class="input-control" value="Kempegowda Bus Station, Bengaluru">
+            </div>
+
+            <div class="form-group">
+              <label for="route-to"><i class="fa-solid fa-location-dot color-red"></i> To (Destination Place)</label>
+              <select id="route-to" class="input-control">
+                <option value="1">Phoenix Marketcity Mall (Bengaluru)</option>
+                <option value="2">AIIMS Hospital (Delhi)</option>
+                <option value="3">Kempegowda Airport (BLR)</option>
+                <option value="4">Chhatrapati Shivaji Terminus (Mumbai)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="route-mode"><i class="fa-solid fa-user-wheelchair"></i> Mobility Profile</label>
+              <select id="route-mode" class="input-control">
+                <option value="wheelchair">Manual / Motorized Wheelchair (100% Step-free)</option>
+                <option value="visual">Visually Impaired (Tactile Paving & Audio Cues)</option>
+                <option value="senior">Senior Citizen (Ramps, Low Gradients, Benches)</option>
+                <option value="stroller">Parent with Stroller / Baby Carriage</option>
+              </select>
+            </div>
+
+            <button class="btn btn-primary btn-block" onclick="calculateAccessibleRoute()"><i class="fa-solid fa-calculator"></i> Calculate Step-Free Route</button>
+
+            <div id="route-summary-box" class="route-summary-box mt-3" style="display:none;">
+              <!-- Route steps output -->
+            </div>
+          </div>
+
+          <div class="route-map-card glass-panel">
+            <div id="route-map" class="map-view-container"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 6: BUSINESS OWNER DASHBOARD -->
+    <section id="view-owner" class="app-view">
+      <div class="container">
+        <div class="view-header">
+          <h2><i class="fa-solid fa-store"></i> Business Owner Portal</h2>
+          <p>Manage business profile, 22 accessibility feature statuses, smart entrance info, and parking meters</p>
+        </div>
+
+        <div class="dashboard-layout glass-panel">
+          <div class="dashboard-sidebar">
+            <button class="dash-tab active" onclick="switchOwnerTab('info')"><i class="fa-solid fa-circle-info"></i> Basic Details</button>
+            <button class="dash-tab" onclick="switchOwnerTab('features')"><i class="fa-solid fa-universal-access"></i> 22 Accessibility Matrix</button>
+            <button class="dash-tab" onclick="switchOwnerTab('parking')"><i class="fa-solid fa-square-parking"></i> Smart Parking Counters</button>
+            <button class="dash-tab" onclick="switchOwnerTab('entrances')"><i class="fa-solid fa-door-open"></i> Smart Entrances</button>
+          </div>
+
+          <div class="dashboard-content">
+            <div id="owner-tab-info" class="dash-panel active">
+              <h3><i class="fa-solid fa-pen-to-square"></i> Manage Facility Information</h3>
+              <form onsubmit="handleSaveOwnerInfo(event)">
+                <div class="form-group">
+                  <label>Business Name</label>
+                  <input type="text" id="owner-biz-name" class="input-control" value="Phoenix Marketcity Mall">
+                </div>
+                <div class="form-group">
+                  <label>Opening / Closing Hours</label>
+                  <div class="grid grid-2">
+                    <input type="text" id="owner-biz-open" class="input-control" value="10:00 AM">
+                    <input type="text" id="owner-biz-close" class="input-control" value="10:00 PM">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label>Contact Phone</label>
+                  <input type="text" id="owner-biz-phone" class="input-control" value="+91 80 6726 6111">
+                </div>
+                <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Save Details</button>
+              </form>
+            </div>
+
+            <div id="owner-tab-features" class="dash-panel">
+              <h3><i class="fa-solid fa-list-check"></i> Manage 22 Accessibility Feature Statuses</h3>
+              <p class="text-muted">Set GREEN (Available), ORANGE (Assisted), or RED (Not Available)</p>
+              <div id="owner-features-list" class="owner-feat-grid">
+                <!-- Populate feature toggles -->
+              </div>
+              <button class="btn btn-primary mt-3" onclick="saveOwnerFeatures()"><i class="fa-solid fa-floppy-disk"></i> Update Accessibility Matrix</button>
+            </div>
+
+            <div id="owner-tab-parking" class="dash-panel">
+              <h3><i class="fa-solid fa-square-parking"></i> Update Real-Time Parking Availability</h3>
+              <div class="form-group">
+                <label>Total Spaces</label>
+                <input type="number" id="owner-park-total" class="input-control" value="450">
+              </div>
+              <div class="form-group">
+                <label>Occupied Spaces</label>
+                <input type="number" id="owner-park-occ" class="input-control" value="280">
+              </div>
+              <div class="form-group">
+                <label>Accessible Spaces for Persons with Disabilities</label>
+                <input type="number" id="owner-park-acc" class="input-control" value="24">
+              </div>
+              <button class="btn btn-primary" onclick="alert('Parking availability counters updated!')"><i class="fa-solid fa-floppy-disk"></i> Sync Counters</button>
+            </div>
+
+            <div id="owner-tab-entrances" class="dash-panel">
+              <h3><i class="fa-solid fa-door-open"></i> Recommended Entrance Setup</h3>
+              <p>Configure North Gate vs South Gate metadata for visitors</p>
+              <div class="form-group">
+                <label>Recommended Entrance Name</label>
+                <input type="text" class="input-control" value="North Gate (Main Plaza)">
+              </div>
+              <div class="form-group">
+                <label>Walking Distance to Main Elevators (meters)</label>
+                <input type="number" class="input-control" value="15">
+              </div>
+              <button class="btn btn-primary" onclick="alert('Entrance Metadata Saved!')"><i class="fa-solid fa-floppy-disk"></i> Update Entrance Metadata</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 7: ADMIN DASHBOARD -->
+    <section id="view-admin" class="app-view">
+      <div class="container">
+        <div class="view-header">
+          <h2><i class="fa-solid fa-user-shield"></i> AccessIndia AI Admin Portal</h2>
+          <p>Verification queue, analytics, community accessibility reports, and compliance auditing</p>
+        </div>
+
+        <!-- Admin Metric Cards -->
+        <div class="grid grid-4 mb-4">
+          <div class="admin-stat-card glass-panel">
+            <div class="stat-num" id="admin-stat-biz">12</div>
+            <div class="stat-label">Verified Places</div>
+          </div>
+          <div class="admin-stat-card glass-panel">
+            <div class="stat-num" id="admin-stat-score">94%</div>
+            <div class="stat-label">Avg Accessibility Score</div>
+          </div>
+          <div class="admin-stat-card glass-panel">
+            <div class="stat-num" id="admin-stat-reports">3</div>
+            <div class="stat-label">Pending Community Reports</div>
+          </div>
+          <div class="admin-stat-card glass-panel">
+            <div class="stat-num">23</div>
+            <div class="stat-label">Supported Languages</div>
+          </div>
+        </div>
+
+        <!-- Reports Table -->
+        <div class="glass-panel p-4">
+          <h3><i class="fa-solid fa-flag"></i> Community Accessibility Issue Verification Queue</h3>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Report ID</th>
+                  <th>Business Place</th>
+                  <th>Issue Category</th>
+                  <th>Description</th>
+                  <th>Submitted Date</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>#REP-104</td>
+                  <td>CSMT Station (Mumbai)</td>
+                  <td>Ramp Blocked</td>
+                  <td>Temporary construction scaffold blocking South Ramp door.</td>
+                  <td>2026-08-01</td>
+                  <td><span class="badge badge-warning">PENDING</span></td>
+                  <td>
+                    <button class="btn btn-sm btn-primary" onclick="this.innerText='Verified'; this.className='btn btn-sm btn-success'">Verify</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>#REP-102</td>
+                  <td>Taj Mahal Palace (Mumbai)</td>
+                  <td>Braille Lift Button</td>
+                  <td>Braille label on 4th floor elevator button worn out.</td>
+                  <td>2026-07-30</td>
+                  <td><span class="badge badge-success">RESOLVED</span></td>
+                  <td><span class="text-muted">Completed</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 8: USER DASHBOARD -->
+    <section id="view-user" class="app-view">
+      <div class="container">
+        <div class="view-header">
+          <h2><i class="fa-solid fa-user"></i> User Accessibility Profile & Saved Places</h2>
+        </div>
+
+        <div class="grid grid-2">
+          <div class="glass-panel p-4">
+            <h3><i class="fa-solid fa-sliders"></i> My Accessibility Preferences</h3>
+            <div class="form-group">
+              <label>Primary Mobility Need</label>
+              <select class="input-control" id="user-pref-need">
+                <option value="wheelchair" selected>Wheelchair User (Requires Ramp & Lift)</option>
+                <option value="visual">Visually Impaired (Requires Braille & Audio)</option>
+                <option value="hearing">Hearing Impaired (Requires Visual Cues)</option>
+                <option value="senior">Senior Citizen (Requires Benches & Step-free)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Preferred Language</label>
+              <select class="input-control" id="user-pref-lang">
+                <option value="en" selected>English</option>
+                <option value="hi">हिंदी (Hindi)</option>
+                <option value="ta">தமிழ் (Tamil)</option>
+                <option value="kn">ಕನ್ನಡ (Kannada)</option>
+              </select>
+            </div>
+            <button class="btn btn-primary" onclick="alert('Profile Preferences Saved!')"><i class="fa-solid fa-floppy-disk"></i> Update Profile</button>
+          </div>
+
+          <div class="glass-panel p-4">
+            <h3><i class="fa-solid fa-heart"></i> Saved Accessible Places</h3>
+            <div class="saved-list">
+              <div class="saved-item">
+                <div>
+                  <strong>Phoenix Marketcity Mall</strong>
+                  <div class="text-muted">Bengaluru &bull; Score: 96/100</div>
+                </div>
+                <button class="btn btn-sm btn-outline" onclick="loadBusinessDetail(1)">View</button>
+              </div>
+              <div class="saved-item">
+                <div>
+                  <strong>AIIMS Multi-Specialty Hospital</strong>
+                  <div class="text-muted">Delhi &bull; Score: 98/100</div>
+                </div>
+                <button class="btn btn-sm btn-outline" onclick="loadBusinessDetail(2)">View</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FLOATING AI ASSISTANT CHATBOT WIDGET -->
+  <div id="ai-widget-container" class="ai-widget-container">
+    <!-- Chat Drawer -->
+    <div id="ai-chat-drawer" class="ai-chat-drawer glass-panel" style="display:none;" aria-label="AccessIndia AI Chat Window">
+      <div class="chat-header">
+        <div class="chat-header-title">
+          <div class="bot-avatar"><i class="fa-solid fa-robot"></i></div>
+          <div>
+            <strong>AccessIndia AI Assistant</strong>
+            <div class="status-online"><span class="online-dot"></span> Online &bull; 23 Languages</div>
+          </div>
+        </div>
+        <button class="chat-close-btn" onclick="toggleAIChat()" aria-label="Close Assistant"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div id="chat-messages" class="chat-messages" aria-live="polite">
+        <div class="message bot-msg">
+          <div class="msg-bubble">
+            Namaste! I am your AccessIndia AI Assistant. Ask me about wheelchair ramps, entrance advice, CCTV parking, or step-free routes.
+          </div>
+        </div>
+      </div>
+
+      <div class="chat-suggestions" id="chat-suggestions">
+        <button class="suggestion-chip" onclick="sendQuickChatMessage('Which entrance is best for wheelchair?')">Best Entrance?</button>
+        <button class="suggestion-chip" onclick="sendQuickChatMessage('Show CCTV accessible parking')">CCTV Parking?</button>
+        <button class="suggestion-chip" onclick="sendQuickChatMessage('Where is accessible restroom?')">Accessible Restroom?</button>
+      </div>
+
+      <div class="chat-input-area">
+        <input type="text" id="chat-user-input" placeholder="Ask AI Assistant..." onkeypress="handleChatKeyPress(event)">
+        <button class="chat-voice-btn" id="btn-chat-voice" onclick="triggerVoiceInput()" aria-label="Voice Input"><i class="fa-solid fa-microphone"></i></button>
+        <button class="btn btn-primary btn-send" onclick="sendChatMessage()"><i class="fa-solid fa-paper-plane"></i></button>
+      </div>
+    </div>
+
+    <!-- Floating AI Trigger Button -->
+    <button id="ai-widget-trigger" class="ai-widget-trigger" onclick="toggleAIChat()" aria-label="Open AccessIndia AI Assistant">
+      <i class="fa-solid fa-wand-magic-sparkles"></i>
+      <span class="ai-trigger-label">AccessIndia AI</span>
+    </button>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="app-footer">
+    <div class="container footer-container">
+      <div>
+        <div class="footer-brand"><i class="fa-solid fa-wheelchair-move"></i> AccessIndia AI</div>
+        <p class="footer-desc">Universal Accessibility & Smart Facility Discovery Platform. WCAG 2.2 AA Compliant.</p>
+      </div>
+      <div class="footer-links">
+        <a href="#home" onclick="switchView('home'); return false;">Home</a>
+        <a href="#search" onclick="switchView('search'); return false;">Search</a>
+        <a href="#categories" onclick="switchView('categories'); return false;">Categories</a>
+        <a href="#route" onclick="switchView('route'); return false;">Route Planner</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      &copy; 2026 AccessIndia AI. Building an Inclusive and Accessible Bharat for All.
+    </div>
+  </footer>
+
+  <!-- Leaflet JS for Maps -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <!-- Main Application Script (Relative Path for GitHub Pages Compatibility) -->
+  <script src="./js/app.js"></script>
+</body>
+</html>
