@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AccessIndia AI – Universal Accessibility & Smart Facility Discovery Platform</title>
+  <title>AccessIndia AI â€“ Universal Accessibility & Smart Facility Discovery Platform</title>
   <meta name="description" content="AI-powered accessibility and smart facility discovery platform across India. Discover wheelchair ramps, tactile paving, Braille lifts, accessible restrooms, EV charging, smart entrance recommendations, and indoor navigation.">
 
   <!-- Google Fonts & Icons -->
@@ -15,10 +15,179 @@
   <!-- Leaflet CSS for Interactive Maps -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
 
-  <!-- AccessIndia Styles (Bulletproof relative links) -->
-  <link rel="stylesheet" href="css/styles.css">
-  <link rel="stylesheet" href="./css/styles.css">
-  <link rel="stylesheet" href="styles.css">
+  <!-- EMBEDDED STYLES -->
+  <style>
+    :root {
+      --primary-color: #0f62fe;
+      --primary-hover: #0043ce;
+      --secondary-color: #0072c3;
+      --accent-color: #11ab7c;
+      --status-green: #10b981;
+      --status-green-bg: #d1fae5;
+      --status-orange: #f59e0b;
+      --status-orange-bg: #fef3c7;
+      --status-red: #ef4444;
+      --status-red-bg: #fee2e2;
+      --bg-main: #f4f7fb;
+      --bg-card: rgba(255, 255, 255, 0.85);
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+      --border-color: rgba(226, 232, 240, 0.8);
+      --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+      --glass-blur: blur(16px);
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 24px;
+      --font-base: 'Outfit', 'Roboto', system-ui, sans-serif;
+    }
+
+    [data-theme="dark"] {
+      --bg-main: #0f172a;
+      --bg-card: rgba(30, 41, 59, 0.85);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --border-color: rgba(51, 65, 85, 0.8);
+    }
+
+    [data-contrast="high"] {
+      --bg-main: #000000 !important;
+      --bg-card: #000000 !important;
+      --text-main: #ffff00 !important;
+      --text-muted: #ffffff !important;
+      --border-color: #ffffff !important;
+      --primary-color: #00ffff !important;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-base); background-color: var(--bg-main); color: var(--text-main); line-height: 1.6; min-height: 100vh; display: flex; flex-direction: column; }
+    body.font-lg { font-size: 18px; }
+    body.font-xl { font-size: 20px; }
+
+    .skip-link { position: absolute; top: -60px; left: 10px; background: var(--primary-color); color: #fff; padding: 12px 20px; z-index: 9999; border-radius: var(--radius-sm); font-weight: 700; transition: top 0.2s ease; }
+    .skip-link:focus { top: 10px; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); border: 0; }
+    .container { width: 100%; max-width: 1280px; margin: 0 auto; padding: 0 1.5rem; }
+    .glass-panel { background: var(--bg-card); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); border: 1px solid var(--border-color); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); }
+
+    .wcag-toolbar { background: #0f172a; color: #f8fafc; padding: 0.5rem 0; font-size: 0.85rem; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+    .wcag-container { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; }
+    .wcag-group { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+    .wcag-btn { background: rgba(255, 255, 255, 0.1); color: #fff; border: 1px solid rgba(255, 255, 255, 0.2); padding: 4px 10px; border-radius: var(--radius-sm); cursor: pointer; font-size: 0.8rem; font-weight: 500; }
+    .text-sizer { display: inline-flex; gap: 2px; }
+    .language-selector-group { display: flex; align-items: center; gap: 0.5rem; }
+    .lang-select { background: rgba(255, 255, 255, 0.15); color: #fff; border: 1px solid rgba(255, 255, 255, 0.3); padding: 4px 8px; border-radius: var(--radius-sm); font-weight: 600; cursor: pointer; }
+    .lang-select option { background: #0f172a; color: #fff; }
+
+    .navbar-header { position: sticky; top: 0; z-index: 1000; background: var(--bg-card); backdrop-filter: var(--glass-blur); border-bottom: 1px solid var(--border-color); padding: 0.75rem 0; }
+    .navbar-container { display: flex; justify-content: space-between; align-items: center; }
+    .brand-logo { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; color: var(--text-main); }
+    .logo-icon { width: 44px; height: 44px; background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); color: #fff; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; }
+    .brand-name { font-size: 1.35rem; font-weight: 800; }
+    .brand-ai { color: var(--primary-color); }
+    .brand-tagline { display: block; font-size: 0.7rem; color: var(--text-muted); font-weight: 500; }
+    .nav-links { display: flex; gap: 1.5rem; }
+    .nav-link { text-decoration: none; color: var(--text-muted); font-weight: 600; font-size: 0.95rem; padding: 6px 12px; border-radius: var(--radius-sm); }
+    .nav-link:hover, .nav-link.active { color: var(--primary-color); background: rgba(15, 98, 254, 0.08); }
+
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 10px 20px; border-radius: var(--radius-md); font-weight: 600; font-size: 0.95rem; cursor: pointer; border: 1px solid transparent; text-decoration: none; }
+    .btn-primary { background: var(--primary-color); color: #fff; box-shadow: 0 4px 12px rgba(15, 98, 254, 0.25); }
+    .btn-outline { background: transparent; border-color: var(--border-color); color: var(--text-main); }
+    .btn-sm { padding: 6px 12px; font-size: 0.85rem; }
+    .btn-block { width: 100%; }
+
+    .main-content { flex: 1; padding: 2rem 0; }
+    .app-view { display: none; }
+    .app-view.active { display: block; }
+
+    .hero-section { padding: 2.5rem 0 3.5rem 0; text-align: center; }
+    .hero-container { max-width: 900px; }
+    .hero-badge { display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(15, 98, 254, 0.1); color: var(--primary-color); padding: 6px 16px; border-radius: 30px; font-weight: 700; font-size: 0.85rem; margin-bottom: 1rem; }
+    .hero-title { font-size: 2.75rem; font-weight: 800; line-height: 1.2; margin-bottom: 1rem; }
+    .hero-subtitle { font-size: 1.15rem; color: var(--text-muted); margin-bottom: 2rem; }
+
+    .search-box-hero { display: flex; align-items: center; background: var(--bg-card); border: 2px solid var(--primary-color); padding: 6px 8px 6px 18px; border-radius: 50px; box-shadow: var(--shadow-lg); margin-bottom: 1.5rem; }
+    .search-icon { color: var(--primary-color); font-size: 1.2rem; margin-right: 12px; }
+    .search-box-hero input { flex: 1; border: none; background: transparent; font-size: 1.05rem; color: var(--text-main); outline: none; }
+    .voice-search-btn { background: rgba(15, 98, 254, 0.1); color: var(--primary-color); border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; margin-right: 8px; font-size: 1.1rem; }
+
+    .hero-tags { display: flex; align-items: center; justify-content: center; gap: 0.5rem; flex-wrap: wrap; }
+    .chip-tag { background: var(--bg-card); border: 1px solid var(--border-color); padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; font-weight: 500; color: var(--text-main); cursor: pointer; }
+
+    .discovery-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 1.5rem; }
+    .city-selector select { padding: 8px 14px; border-radius: var(--radius-md); border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-main); font-weight: 600; }
+    .map-split-layout { display: grid; grid-template-columns: 1fr 420px; gap: 1.5rem; }
+    .map-card { height: 520px; position: relative; overflow: hidden; }
+    .map-view-container { width: 100%; height: 100%; border-radius: var(--radius-lg); z-index: 1; }
+    .map-legend { position: absolute; bottom: 15px; left: 15px; z-index: 500; background: rgba(15, 23, 42, 0.85); color: #fff; padding: 8px 14px; border-radius: var(--radius-md); font-size: 0.8rem; display: flex; gap: 12px; }
+    .badge-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; }
+    .badge-dot.green { background: var(--status-green); }
+    .badge-dot.orange { background: var(--status-orange); }
+
+    .places-sidebar { display: flex; flex-direction: column; height: 520px; }
+    .sidebar-title-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+    .places-card-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 1rem; }
+
+    .place-card { padding: 1.25rem; border-radius: var(--radius-md); cursor: pointer; }
+    .place-card:hover { border-color: var(--primary-color); }
+    .place-card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem; }
+    .score-badge { padding: 4px 10px; border-radius: 20px; font-weight: 800; font-size: 0.85rem; }
+    .score-badge.green { background: var(--status-green-bg); color: var(--status-green); }
+    .score-badge.orange { background: var(--status-orange-bg); color: var(--status-orange); }
+
+    .highlight-section { margin-top: 3.5rem; }
+    .grid { display: grid; gap: 1.5rem; }
+    .grid-3 { grid-template-columns: repeat(3, 1fr); }
+    .grid-4 { grid-template-columns: repeat(4, 1fr); }
+    .grid-2 { grid-template-columns: repeat(2, 1fr); }
+    .feature-spotlight-card { padding: 2rem; text-align: center; }
+    .spotlight-icon { width: 60px; height: 60px; border-radius: 50%; background: rgba(15, 98, 254, 0.1); color: var(--primary-color); font-size: 1.6rem; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem auto; }
+
+    .categories-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
+    .cat-card { padding: 1.75rem; text-align: center; border-radius: var(--radius-lg); cursor: pointer; }
+    .cat-icon { font-size: 2.2rem; color: var(--primary-color); margin-bottom: 1rem; }
+
+    .search-page-layout { display: grid; grid-template-columns: 320px 1fr; gap: 2rem; margin-top: 2rem; }
+    .filter-panel { padding: 1.5rem; }
+    .input-control { width: 100%; padding: 10px 14px; border-radius: var(--radius-md); border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-main); font-family: inherit; }
+    .checkbox-list { display: flex; flex-direction: column; gap: 0.5rem; max-height: 200px; overflow-y: auto; font-size: 0.85rem; }
+    .search-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; }
+
+    .smart-entrance-card { background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(15, 98, 254, 0.08)); border: 2px solid var(--status-green); padding: 1.75rem; border-radius: var(--radius-lg); margin-bottom: 2rem; }
+    .cctv-scanner-box { background: #000; color: #00ff00; font-family: monospace; padding: 1.5rem; border-radius: var(--radius-lg); position: relative; overflow: hidden; margin-top: 1rem; }
+    .level-tabs { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+    .level-tab { padding: 8px 16px; border-radius: var(--radius-sm); border: 1px solid var(--border-color); background: var(--bg-card); cursor: pointer; font-weight: 600; }
+    .level-tab.active { background: var(--primary-color); color: #fff; }
+
+    .route-planner-layout { display: grid; grid-template-columns: 360px 1fr; gap: 2rem; margin-top: 1.5rem; }
+    .dashboard-layout { display: grid; grid-template-columns: 240px 1fr; gap: 2rem; padding: 1.5rem; margin-top: 1.5rem; }
+    .dashboard-sidebar { display: flex; flex-direction: column; gap: 0.5rem; }
+    .dash-tab { padding: 12px 16px; text-align: left; border: none; background: transparent; border-radius: var(--radius-sm); cursor: pointer; font-weight: 600; color: var(--text-muted); }
+    .dash-tab.active { background: var(--primary-color); color: #fff; }
+    .dash-panel { display: none; }
+    .dash-panel.active { display: block; }
+
+    .ai-widget-container { position: fixed; bottom: 25px; right: 25px; z-index: 9000; }
+    .ai-widget-trigger { background: linear-gradient(135deg, var(--primary-color), #7c3aed); color: #fff; border: none; padding: 14px 22px; border-radius: 40px; font-weight: 700; font-size: 1rem; cursor: pointer; box-shadow: 0 10px 25px rgba(15, 98, 254, 0.4); display: flex; align-items: center; gap: 0.75rem; }
+    .ai-chat-drawer { position: absolute; bottom: 70px; right: 0; width: 380px; height: 520px; border-radius: var(--radius-lg); display: flex; flex-direction: column; overflow: hidden; box-shadow: var(--shadow-lg); background: var(--bg-card); backdrop-filter: blur(20px); border: 1px solid var(--border-color); }
+    .chat-header { background: linear-gradient(135deg, #0f172a, #1e293b); color: #fff; padding: 1rem; display: flex; justify-content: space-between; align-items: center; }
+    .chat-messages { flex: 1; padding: 1rem; overflow-y: auto; display: flex; flex-direction: column; gap: 0.75rem; }
+    .msg-bubble { max-width: 80%; padding: 10px 14px; border-radius: 16px; font-size: 0.9rem; }
+    .bot-msg .msg-bubble { background: var(--bg-main); border: 1px solid var(--border-color); }
+    .user-msg .msg-bubble { background: var(--primary-color); color: #fff; }
+    .chat-input-area { padding: 0.75rem; border-top: 1px solid var(--border-color); display: flex; gap: 0.5rem; }
+    .chat-input-area input { flex: 1; border: 1px solid var(--border-color); border-radius: 20px; padding: 8px 14px; outline: none; font-size: 0.85rem; background: var(--bg-main); color: var(--text-main); }
+
+    .app-footer { background: #0f172a; color: #f8fafc; padding: 2.5rem 0 1rem 0; margin-top: 4rem; }
+    .footer-container { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1.5rem; margin-bottom: 2rem; }
+    .footer-brand { font-size: 1.4rem; font-weight: 800; color: var(--primary-color); }
+    .footer-bottom { border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1rem; text-align: center; font-size: 0.85rem; color: #64748b; }
+
+    @media (max-width: 992px) {
+      .map-split-layout, .search-page-layout, .route-planner-layout, .dashboard-layout, .grid-3, .grid-4, .grid-2 { grid-template-columns: 1fr; }
+      .nav-links { display: none; }
+    }
+  </style>
 </head>
 <body>
 
@@ -30,44 +199,43 @@
     <div class="container wcag-container">
       <div class="wcag-group">
         <span class="wcag-label"><i class="fa-solid fa-universal-access" aria-hidden="true"></i> <strong data-i18n="a11y_tools">WCAG 2.2 Toolkit:</strong></span>
-        <button id="btn-contrast" class="wcag-btn" aria-label="Toggle High Contrast Mode" title="High Contrast Mode"><i class="fa-solid fa-circle-half-stroke" aria-hidden="true"></i> High Contrast</button>
-        <button id="btn-theme" class="wcag-btn" aria-label="Toggle Dark Mode" title="Toggle Dark/Light Mode"><i class="fa-solid fa-moon" aria-hidden="true"></i> <span id="theme-text">Dark Mode</span></button>
-        <div class="text-sizer" role="group" aria-label="Text Size Controls">
-          <button id="btn-font-dec" class="wcag-btn" aria-label="Decrease Font Size" title="Decrease Font Size">A-</button>
-          <button id="btn-font-reset" class="wcag-btn" aria-label="Reset Font Size" title="Reset Font Size">A</button>
-          <button id="btn-font-inc" class="wcag-btn" aria-label="Increase Font Size" title="Increase Font Size">A+</button>
+        <button id="btn-contrast" class="wcag-btn" aria-label="Toggle High Contrast Mode"><i class="fa-solid fa-circle-half-stroke"></i> High Contrast</button>
+        <button id="btn-theme" class="wcag-btn" aria-label="Toggle Dark Mode"><i class="fa-solid fa-moon"></i> <span id="theme-text">Dark Mode</span></button>
+        <div class="text-sizer" role="group">
+          <button id="btn-font-dec" class="wcag-btn">A-</button>
+          <button id="btn-font-reset" class="wcag-btn">A</button>
+          <button id="btn-font-inc" class="wcag-btn">A+</button>
         </div>
-        <button id="btn-tts" class="wcag-btn" aria-label="Read Page Out Loud" title="Text-to-Speech Output"><i class="fa-solid fa-volume-high" aria-hidden="true"></i> <span id="tts-label">Read Page</span></button>
-        <button id="btn-motion" class="wcag-btn" aria-label="Toggle Reduced Motion" title="Reduced Motion"><i class="fa-solid fa-person-walking" aria-hidden="true"></i> Motion: Normal</button>
+        <button id="btn-tts" class="wcag-btn"><i class="fa-solid fa-volume-high"></i> <span id="tts-label">Read Page</span></button>
+        <button id="btn-motion" class="wcag-btn"><i class="fa-solid fa-person-walking"></i> Motion: Normal</button>
       </div>
 
       <div class="language-selector-group">
-        <label for="lang-select" class="sr-only">Select Preferred Language</label>
         <i class="fa-solid fa-language" aria-hidden="true"></i>
         <select id="lang-select" class="lang-select" aria-label="Select Language (23 Indian Languages)">
           <option value="en" selected>English</option>
-          <option value="hi">हिंदी (Hindi)</option>
-          <option value="ta">தமிழ் (Tamil)</option>
-          <option value="te">తెలుగు (Telugu)</option>
-          <option value="kn">ಕನ್ನಡ (Kannada)</option>
-          <option value="ml">മലയാളം (Malayalam)</option>
-          <option value="mr">मराठी (Marathi)</option>
-          <option value="gu">ગુજરાતી (Gujarati)</option>
-          <option value="pa">ਪੰਜਾਬੀ (Punjabi)</option>
-          <option value="bn">বাংলা (Bengali)</option>
-          <option value="or">ଓଡ଼ିଆ (Odia)</option>
-          <option value="ur">اردو (Urdu)</option>
-          <option value="as">অসমীয়া (Assamese)</option>
-          <option value="kok">कोंकणी (Konkani)</option>
-          <option value="ne">नेपाली (Nepali)</option>
-          <option value="doi">डोगरी (Dogri)</option>
-          <option value="sd">सिन्धी (Sindhi)</option>
-          <option value="mai">मैथिली (Maithili)</option>
-          <option value="sat">संथाली (Santali)</option>
-          <option value="mni">মৈতৈলোন্ (Manipuri)</option>
-          <option value="brx">बड़ो (Bodo)</option>
-          <option value="ks">कश्मीरी (Kashmiri)</option>
-          <option value="sa">संस्कृतम् (Sanskrit)</option>
+          <option value="hi">à¤¹à¤¿à¤‚à¤¦à¥€ (Hindi)</option>
+          <option value="ta">à®¤à®®à®¿à®´à¯ (Tamil)</option>
+          <option value="te">à°¤à±†à°²à±à°—à± (Telugu)</option>
+          <option value="kn">à²•à²¨à³à²¨à²¡ (Kannada)</option>
+          <option value="ml">à´®à´²à´¯à´¾à´³à´‚ (Malayalam)</option>
+          <option value="mr">à¤®à¤°à¤¾à¤ à¥€ (Marathi)</option>
+          <option value="gu">àª—à«àªœàª°àª¾àª¤à«€ (Gujarati)</option>
+          <option value="pa">à¨ªà©°à¨œà¨¾à¨¬à©€ (Punjabi)</option>
+          <option value="bn">à¦¬à¦¾à¦‚à¦²à¦¾ (Bengali)</option>
+          <option value="or">à¬“à¬¡à¬¼à¬¿à¬† (Odia)</option>
+          <option value="ur">Ø§Ø±Ø¯Ùˆ (Urdu)</option>
+          <option value="as">à¦…à¦¸à¦®à§€à§Ÿà¦¾ (Assamese)</option>
+          <option value="kok">à¤•à¥‹à¤‚à¤•à¤£à¥€ (Konkani)</option>
+          <option value="ne">à¤¨à¥‡à¤ªà¤¾à¤²à¥€ (Nepali)</option>
+          <option value="doi">à¤¡à¥‹à¤—à¤°à¥€ (Dogri)</option>
+          <option value="sd">à¤¸à¤¿à¤¨à¥à¤§à¥€ (Sindhi)</option>
+          <option value="mai">à¤®à¥ˆà¤¥à¤¿à¤²à¥€ (Maithili)</option>
+          <option value="sat">à¤¸à¤‚à¤¥à¤¾à¤²à¥€ (Santali)</option>
+          <option value="mni">à¦®à§ˆà¦¤à§ˆà¦²à§‹à¦¨à§ (Manipuri)</option>
+          <option value="brx">à¤¬à¤¡à¤¼à¥‹ (Bodo)</option>
+          <option value="ks">à¤•à¤¶à¥à¤®à¥€à¤°à¥€ (Kashmiri)</option>
+          <option value="sa">à¤¸à¤‚à¤¸à¥à¤•à¥ƒà¤¤à¤®à¥ (Sanskrit)</option>
         </select>
       </div>
     </div>
@@ -76,7 +244,7 @@
   <!-- Top Main Navigation Bar -->
   <header class="navbar-header">
     <div class="container navbar-container">
-      <a href="#" class="brand-logo" onclick="switchView('home'); return false;" aria-label="AccessIndia AI Home">
+      <a href="#" class="brand-logo" onclick="switchView('home'); return false;">
         <div class="logo-icon"><i class="fa-solid fa-wheelchair-move"></i></div>
         <div class="logo-text">
           <span class="brand-name">AccessIndia <span class="brand-ai">AI</span></span>
@@ -104,7 +272,6 @@
 
     <!-- VIEW 1: HOME PAGE -->
     <section id="view-home" class="app-view active">
-      <!-- Hero Section -->
       <div class="hero-section">
         <div class="container hero-container">
           <div class="hero-content">
@@ -112,16 +279,14 @@
             <h1 class="hero-title" data-i18n="hero_title">Discover 100% Accessible Places & Smart Entrances Near You</h1>
             <p class="hero-subtitle" data-i18n="hero_subtitle">Empowering wheelchair users, senior citizens, visually impaired, and families across India with verified step-free routes, CCTV parking AI, and indoor navigation.</p>
 
-            <!-- Search Bar -->
             <div class="search-box-hero">
               <i class="fa-solid fa-magnifying-glass search-icon"></i>
-              <input type="text" id="hero-search-input" placeholder="e.g. Wheelchair accessible hospital in Delhi, Mall with feeding room..." aria-label="Search accessible places">
-              <button class="voice-search-btn" id="btn-voice-search" aria-label="Voice Search" title="Voice Search (Speech-to-text)"><i class="fa-solid fa-microphone"></i></button>
+              <input type="text" id="hero-search-input" placeholder="e.g. Wheelchair accessible hospital in Delhi, Mall with feeding room...">
+              <button class="voice-search-btn" id="btn-voice-search" aria-label="Voice Search"><i class="fa-solid fa-microphone"></i></button>
               <button class="btn btn-primary" onclick="handleHeroSearch()"><i class="fa-solid fa-arrow-right"></i> <span data-i18n="btn_search">Search</span></button>
             </div>
 
-            <!-- Quick Filter Tags -->
-            <div class="hero-tags" role="group" aria-label="Quick Category Filters">
+            <div class="hero-tags">
               <span class="tag-label">Popular Searches:</span>
               <button class="chip-tag" onclick="quickSearchCategory('Hospitals')"><i class="fa-solid fa-hospital"></i> Hospitals</button>
               <button class="chip-tag" onclick="quickSearchCategory('Shopping Malls')"><i class="fa-solid fa-bag-shopping"></i> Shopping Malls</button>
@@ -133,7 +298,6 @@
         </div>
       </div>
 
-      <!-- Main Interactive Discovery Hub: Map + List Split View -->
       <div class="container discovery-container">
         <div class="discovery-header">
           <div>
@@ -155,47 +319,40 @@
         </div>
 
         <div class="map-split-layout">
-          <!-- Interactive Leaflet Map -->
           <div class="map-card glass-panel">
-            <div id="home-map" class="map-view-container" aria-label="Interactive Map of Accessible Places"></div>
+            <div id="home-map" class="map-view-container"></div>
             <div class="map-legend">
               <span class="legend-item"><span class="badge-dot green"></span> 90-100 (Fully Accessible)</span>
               <span class="legend-item"><span class="badge-dot orange"></span> 70-89 (Assisted)</span>
-              <span class="legend-item"><span class="badge-dot red"></span> &lt;70 (Limited)</span>
             </div>
           </div>
 
-          <!-- Places Listing Sidebar -->
           <div class="places-sidebar">
             <div class="sidebar-title-bar">
               <h3><i class="fa-solid fa-compass"></i> Verified Nearby Places (<span id="places-count">0</span>)</h3>
               <button class="btn btn-sm btn-outline" onclick="switchView('search')">View All</button>
             </div>
-
-            <div id="home-places-list" class="places-card-list">
-              <!-- Dynamically populated -->
-            </div>
+            <div id="home-places-list" class="places-card-list"></div>
           </div>
         </div>
       </div>
 
-      <!-- Feature Highlight Spotlight -->
       <div class="container highlight-section">
         <div class="grid grid-3">
           <div class="feature-spotlight-card glass-panel">
             <div class="spotlight-icon"><i class="fa-solid fa-door-open"></i></div>
             <h3>Smart Entrance Recommendation</h3>
-            <p>Don't get stuck at stairs. AccessIndia AI calculates the exact ramp slope, door clearance, and walking distance to direct you to the optimal entrance gate.</p>
+            <p>Calculates ramp slope, door clearance, and walking distance to direct you to the optimal entrance gate.</p>
           </div>
           <div class="feature-spotlight-card glass-panel">
             <div class="spotlight-icon"><i class="fa-solid fa-video"></i></div>
             <h3>CCTV Parking AI Occupancy</h3>
-            <p>Our vision model analyzes live CCTV feeds to show real-time accessible parking spot availability before you arrive at the facility.</p>
+            <p>Analyzes live CCTV feeds to show real-time accessible parking spot availability.</p>
           </div>
           <div class="feature-spotlight-card glass-panel">
             <div class="spotlight-icon"><i class="fa-solid fa-route"></i></div>
-            <h3>Indoor & Step-Free Route Planner</h3>
-            <p>Seamlessly navigate through multi-level facilities from parking bays to elevators, braille rest rooms, and food court kiosks.</p>
+            <h3>Indoor Navigation</h3>
+            <p>Navigate multi-level facilities from parking to elevators and braille rest rooms.</p>
           </div>
         </div>
       </div>
@@ -204,417 +361,150 @@
     <!-- VIEW 2: CATEGORIES PAGE -->
     <section id="view-categories" class="app-view">
       <div class="container">
-        <div class="view-header">
-          <h2><i class="fa-solid fa-layer-group"></i> Explore Accessibility by Category</h2>
-          <p>Filter places based on specialized facility requirements</p>
-        </div>
-
-        <div id="categories-grid" class="categories-grid">
-          <!-- 15 Granular Categories dynamically populated -->
-        </div>
+        <h2><i class="fa-solid fa-layer-group"></i> Explore Accessibility by Category</h2>
+        <div id="categories-grid" class="categories-grid"></div>
       </div>
     </section>
 
-    <!-- VIEW 3: SEARCH & MULTI-FILTER PAGE -->
+    <!-- VIEW 3: SEARCH PAGE -->
     <section id="view-search" class="app-view">
       <div class="container">
-        <div class="view-header">
-          <h2><i class="fa-solid fa-filter"></i> Advanced Accessibility Search</h2>
-          <p>Find businesses matching specific accessibility standards</p>
-        </div>
-
+        <h2><i class="fa-solid fa-filter"></i> Advanced Accessibility Search</h2>
         <div class="search-page-layout">
-          <!-- Filter Panel -->
           <aside class="filter-panel glass-panel">
-            <h3><i class="fa-solid fa-sliders"></i> Filter Criteria</h3>
-
-            <div class="filter-group">
-              <label for="filter-city">City</label>
+            <h3>Filter Criteria</h3>
+            <div style="margin: 1rem 0;">
+              <label>City</label>
               <select id="filter-city" class="input-control">
                 <option value="">All Cities</option>
                 <option value="Bengaluru">Bengaluru</option>
                 <option value="Delhi">Delhi</option>
                 <option value="Mumbai">Mumbai</option>
                 <option value="Chennai">Chennai</option>
-                <option value="Hyderabad">Hyderabad</option>
-                <option value="Kolkata">Kolkata</option>
               </select>
             </div>
-
-            <div class="filter-group">
-              <label for="filter-category">Category</label>
+            <div style="margin-bottom: 1rem;">
+              <label>Category</label>
               <select id="filter-category" class="input-control">
                 <option value="">All Categories</option>
                 <option value="Restaurants">Restaurants</option>
                 <option value="Shopping Malls">Shopping Malls</option>
                 <option value="Hospitals">Hospitals</option>
-                <option value="Hotels">Hotels</option>
-                <option value="EV Charging Stations">EV Charging Stations</option>
-                <option value="Petrol Bunks">Petrol Bunks</option>
-                <option value="Railway Stations">Railway Stations</option>
                 <option value="Airports">Airports</option>
-                <option value="Parks">Parks</option>
-                <option value="Banks">Banks</option>
-                <option value="Pharmacies">Pharmacies</option>
               </select>
             </div>
-
-            <div class="filter-group">
-              <label for="filter-min-score">Minimum Accessibility Score (0 - 100)</label>
-              <input type="range" id="filter-min-score" min="50" max="100" value="70" oninput="document.getElementById('score-val').innerText = this.value">
-              <div class="range-val">Score &ge; <span id="score-val">70</span> / 100</div>
-            </div>
-
-            <div class="filter-group">
-              <label>Mandatory Features</label>
-              <div class="checkbox-list">
-                <label><input type="checkbox" class="feature-chk" value="Wheelchair Ramp"> Wheelchair Ramp</label>
-                <label><input type="checkbox" class="feature-chk" value="Elevator"> Elevator / Lift</label>
-                <label><input type="checkbox" class="feature-chk" value="Braille Lift Buttons"> Braille Buttons</label>
-                <label><input type="checkbox" class="feature-chk" value="Accessible Restroom"> Accessible Restroom</label>
-                <label><input type="checkbox" class="feature-chk" value="Accessible Parking"> Accessible Parking</label>
-                <label><input type="checkbox" class="feature-chk" value="Tactile Paving"> Tactile Paving</label>
-                <label><input type="checkbox" class="feature-chk" value="Feeding Room"> Feeding Room</label>
-              </div>
-            </div>
-
-            <button class="btn btn-primary btn-block" onclick="applyAdvancedFilters()"><i class="fa-solid fa-filter"></i> Apply Filters</button>
-            <button class="btn btn-outline btn-block" onclick="resetAdvancedFilters()"><i class="fa-solid fa-rotate-left"></i> Reset</button>
+            <button class="btn btn-primary btn-block" onclick="applyAdvancedFilters()">Apply Filters</button>
           </aside>
-
-          <!-- Search Results List -->
           <main class="results-panel">
-            <div class="results-header">
-              <div id="results-summary">Showing 0 places</div>
-              <div class="sort-control">
-                <label for="sort-by">Sort By:</label>
-                <select id="sort-by" onchange="sortSearchResults(this.value)">
-                  <option value="score">Accessibility Score (High to Low)</option>
-                  <option value="rating">Rating (High to Low)</option>
-                  <option value="name">Name (A-Z)</option>
-                </select>
-              </div>
-            </div>
-
-            <div id="search-results-grid" class="search-grid">
-              <!-- Dynamically populated search cards -->
-            </div>
+            <div id="results-summary">Showing places</div>
+            <div id="search-results-grid" class="search-grid"></div>
           </main>
         </div>
       </div>
     </section>
 
-    <!-- VIEW 4: BUSINESS PROFILE DETAIL PAGE -->
+    <!-- VIEW 4: DETAIL PAGE -->
     <section id="view-detail" class="app-view">
       <div class="container">
-        <button class="btn btn-outline back-btn" onclick="switchView('home')"><i class="fa-solid fa-arrow-left"></i> Back to Discovery</button>
-
-        <div id="detail-content" class="detail-container">
-          <!-- Dynamically populated business profile details -->
-        </div>
+        <button class="btn btn-outline mb-3" onclick="switchView('home')"><i class="fa-solid fa-arrow-left"></i> Back</button>
+        <div id="detail-content" class="detail-container"></div>
       </div>
     </section>
 
-    <!-- VIEW 5: ACCESSIBLE ROUTE PLANNER -->
+    <!-- VIEW 5: ROUTE PLANNER -->
     <section id="view-route" class="app-view">
       <div class="container">
-        <div class="view-header">
-          <h2><i class="fa-solid fa-route"></i> Step-Free Accessibility Route Planner</h2>
-          <p>Generate color-coded accessible paths (Green: Fully Accessible, Yellow: Partial, Red: Inaccessible)</p>
-        </div>
-
+        <h2><i class="fa-solid fa-route"></i> Step-Free Accessibility Route Planner</h2>
         <div class="route-planner-layout">
-          <div class="route-control-card glass-panel">
-            <div class="form-group">
-              <label for="route-from"><i class="fa-solid fa-location-dot color-green"></i> From (Start Location)</label>
+          <div class="glass-panel p-4">
+            <div style="margin-bottom:1rem;">
+              <label>From (Start Location)</label>
               <input type="text" id="route-from" class="input-control" value="Kempegowda Bus Station, Bengaluru">
             </div>
-
-            <div class="form-group">
-              <label for="route-to"><i class="fa-solid fa-location-dot color-red"></i> To (Destination Place)</label>
+            <div style="margin-bottom:1rem;">
+              <label>To (Destination)</label>
               <select id="route-to" class="input-control">
                 <option value="1">Phoenix Marketcity Mall (Bengaluru)</option>
                 <option value="2">AIIMS Hospital (Delhi)</option>
-                <option value="3">Kempegowda Airport (BLR)</option>
-                <option value="4">Chhatrapati Shivaji Terminus (Mumbai)</option>
               </select>
             </div>
-
-            <div class="form-group">
-              <label for="route-mode"><i class="fa-solid fa-user-wheelchair"></i> Mobility Profile</label>
-              <select id="route-mode" class="input-control">
-                <option value="wheelchair">Manual / Motorized Wheelchair (100% Step-free)</option>
-                <option value="visual">Visually Impaired (Tactile Paving & Audio Cues)</option>
-                <option value="senior">Senior Citizen (Ramps, Low Gradients, Benches)</option>
-                <option value="stroller">Parent with Stroller / Baby Carriage</option>
-              </select>
-            </div>
-
-            <button class="btn btn-primary btn-block" onclick="calculateAccessibleRoute()"><i class="fa-solid fa-calculator"></i> Calculate Step-Free Route</button>
-
-            <div id="route-summary-box" class="route-summary-box mt-3" style="display:none;">
-              <!-- Route steps output -->
-            </div>
+            <button class="btn btn-primary btn-block" onclick="calculateAccessibleRoute()">Calculate Route</button>
+            <div id="route-summary-box" style="display:none; margin-top:1rem;" class="p-3 glass-panel"></div>
           </div>
-
-          <div class="route-map-card glass-panel">
+          <div class="map-card glass-panel">
             <div id="route-map" class="map-view-container"></div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- VIEW 6: BUSINESS OWNER DASHBOARD -->
+    <!-- VIEW 6: BUSINESS PORTAL -->
     <section id="view-owner" class="app-view">
       <div class="container">
-        <div class="view-header">
-          <h2><i class="fa-solid fa-store"></i> Business Owner Portal</h2>
-          <p>Manage business profile, 22 accessibility feature statuses, smart entrance info, and parking meters</p>
-        </div>
-
+        <h2><i class="fa-solid fa-store"></i> Business Owner Portal</h2>
         <div class="dashboard-layout glass-panel">
           <div class="dashboard-sidebar">
-            <button class="dash-tab active" onclick="switchOwnerTab('info')"><i class="fa-solid fa-circle-info"></i> Basic Details</button>
-            <button class="dash-tab" onclick="switchOwnerTab('features')"><i class="fa-solid fa-universal-access"></i> 22 Accessibility Matrix</button>
-            <button class="dash-tab" onclick="switchOwnerTab('parking')"><i class="fa-solid fa-square-parking"></i> Smart Parking Counters</button>
-            <button class="dash-tab" onclick="switchOwnerTab('entrances')"><i class="fa-solid fa-door-open"></i> Smart Entrances</button>
+            <button class="dash-tab active" onclick="switchOwnerTab('info')">Basic Details</button>
+            <button class="dash-tab" onclick="switchOwnerTab('features')">22 Matrix</button>
           </div>
-
           <div class="dashboard-content">
             <div id="owner-tab-info" class="dash-panel active">
-              <h3><i class="fa-solid fa-pen-to-square"></i> Manage Facility Information</h3>
-              <form onsubmit="handleSaveOwnerInfo(event)">
-                <div class="form-group">
-                  <label>Business Name</label>
-                  <input type="text" id="owner-biz-name" class="input-control" value="Phoenix Marketcity Mall">
-                </div>
-                <div class="form-group">
-                  <label>Opening / Closing Hours</label>
-                  <div class="grid grid-2">
-                    <input type="text" id="owner-biz-open" class="input-control" value="10:00 AM">
-                    <input type="text" id="owner-biz-close" class="input-control" value="10:00 PM">
-                  </div>
-                </div>
-                <div class="form-group">
-                  <label>Contact Phone</label>
-                  <input type="text" id="owner-biz-phone" class="input-control" value="+91 80 6726 6111">
-                </div>
-                <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Save Details</button>
-              </form>
+              <h3>Facility Information</h3>
+              <p>Phoenix Marketcity Mall - Verified Business</p>
             </div>
-
             <div id="owner-tab-features" class="dash-panel">
-              <h3><i class="fa-solid fa-list-check"></i> Manage 22 Accessibility Feature Statuses</h3>
-              <p class="text-muted">Set GREEN (Available), ORANGE (Assisted), or RED (Not Available)</p>
-              <div id="owner-features-list" class="owner-feat-grid">
-                <!-- Populate feature toggles -->
-              </div>
-              <button class="btn btn-primary mt-3" onclick="saveOwnerFeatures()"><i class="fa-solid fa-floppy-disk"></i> Update Accessibility Matrix</button>
-            </div>
-
-            <div id="owner-tab-parking" class="dash-panel">
-              <h3><i class="fa-solid fa-square-parking"></i> Update Real-Time Parking Availability</h3>
-              <div class="form-group">
-                <label>Total Spaces</label>
-                <input type="number" id="owner-park-total" class="input-control" value="450">
-              </div>
-              <div class="form-group">
-                <label>Occupied Spaces</label>
-                <input type="number" id="owner-park-occ" class="input-control" value="280">
-              </div>
-              <div class="form-group">
-                <label>Accessible Spaces for Persons with Disabilities</label>
-                <input type="number" id="owner-park-acc" class="input-control" value="24">
-              </div>
-              <button class="btn btn-primary" onclick="alert('Parking availability counters updated!')"><i class="fa-solid fa-floppy-disk"></i> Sync Counters</button>
-            </div>
-
-            <div id="owner-tab-entrances" class="dash-panel">
-              <h3><i class="fa-solid fa-door-open"></i> Recommended Entrance Setup</h3>
-              <p>Configure North Gate vs South Gate metadata for visitors</p>
-              <div class="form-group">
-                <label>Recommended Entrance Name</label>
-                <input type="text" class="input-control" value="North Gate (Main Plaza)">
-              </div>
-              <div class="form-group">
-                <label>Walking Distance to Main Elevators (meters)</label>
-                <input type="number" class="input-control" value="15">
-              </div>
-              <button class="btn btn-primary" onclick="alert('Entrance Metadata Saved!')"><i class="fa-solid fa-floppy-disk"></i> Update Entrance Metadata</button>
+              <h3>Feature Matrix</h3>
+              <p>All 22 features set to GREEN (Compliant)</p>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- VIEW 7: ADMIN DASHBOARD -->
+    <!-- VIEW 7: ADMIN -->
     <section id="view-admin" class="app-view">
       <div class="container">
-        <div class="view-header">
-          <h2><i class="fa-solid fa-user-shield"></i> AccessIndia AI Admin Portal</h2>
-          <p>Verification queue, analytics, community accessibility reports, and compliance auditing</p>
-        </div>
-
-        <!-- Admin Metric Cards -->
-        <div class="grid grid-4 mb-4">
-          <div class="admin-stat-card glass-panel">
-            <div class="stat-num" id="admin-stat-biz">12</div>
-            <div class="stat-label">Verified Places</div>
-          </div>
-          <div class="admin-stat-card glass-panel">
-            <div class="stat-num" id="admin-stat-score">94%</div>
-            <div class="stat-label">Avg Accessibility Score</div>
-          </div>
-          <div class="admin-stat-card glass-panel">
-            <div class="stat-num" id="admin-stat-reports">3</div>
-            <div class="stat-label">Pending Community Reports</div>
-          </div>
-          <div class="admin-stat-card glass-panel">
-            <div class="stat-num">23</div>
-            <div class="stat-label">Supported Languages</div>
-          </div>
-        </div>
-
-        <!-- Reports Table -->
-        <div class="glass-panel p-4">
-          <h3><i class="fa-solid fa-flag"></i> Community Accessibility Issue Verification Queue</h3>
-          <div class="table-responsive">
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>Report ID</th>
-                  <th>Business Place</th>
-                  <th>Issue Category</th>
-                  <th>Description</th>
-                  <th>Submitted Date</th>
-                  <th>Status</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>#REP-104</td>
-                  <td>CSMT Station (Mumbai)</td>
-                  <td>Ramp Blocked</td>
-                  <td>Temporary construction scaffold blocking South Ramp door.</td>
-                  <td>2026-08-01</td>
-                  <td><span class="badge badge-warning">PENDING</span></td>
-                  <td>
-                    <button class="btn btn-sm btn-primary" onclick="this.innerText='Verified'; this.className='btn btn-sm btn-success'">Verify</button>
-                  </td>
-                </tr>
-                <tr>
-                  <td>#REP-102</td>
-                  <td>Taj Mahal Palace (Mumbai)</td>
-                  <td>Braille Lift Button</td>
-                  <td>Braille label on 4th floor elevator button worn out.</td>
-                  <td>2026-07-30</td>
-                  <td><span class="badge badge-success">RESOLVED</span></td>
-                  <td><span class="text-muted">Completed</span></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+        <h2><i class="fa-solid fa-user-shield"></i> AccessIndia AI Admin Portal</h2>
+        <div class="glass-panel p-4 mt-3">
+          <h3>Verification Queue</h3>
+          <p>System Operating Normally &bull; 12 Verified Places &bull; 23 Languages Supported</p>
         </div>
       </div>
     </section>
 
-    <!-- VIEW 8: USER DASHBOARD -->
+    <!-- VIEW 8: USER PROFILE -->
     <section id="view-user" class="app-view">
       <div class="container">
-        <div class="view-header">
-          <h2><i class="fa-solid fa-user"></i> User Accessibility Profile & Saved Places</h2>
-        </div>
-
-        <div class="grid grid-2">
-          <div class="glass-panel p-4">
-            <h3><i class="fa-solid fa-sliders"></i> My Accessibility Preferences</h3>
-            <div class="form-group">
-              <label>Primary Mobility Need</label>
-              <select class="input-control" id="user-pref-need">
-                <option value="wheelchair" selected>Wheelchair User (Requires Ramp & Lift)</option>
-                <option value="visual">Visually Impaired (Requires Braille & Audio)</option>
-                <option value="hearing">Hearing Impaired (Requires Visual Cues)</option>
-                <option value="senior">Senior Citizen (Requires Benches & Step-free)</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label>Preferred Language</label>
-              <select class="input-control" id="user-pref-lang">
-                <option value="en" selected>English</option>
-                <option value="hi">हिंदी (Hindi)</option>
-                <option value="ta">தமிழ் (Tamil)</option>
-                <option value="kn">ಕನ್ನಡ (Kannada)</option>
-              </select>
-            </div>
-            <button class="btn btn-primary" onclick="alert('Profile Preferences Saved!')"><i class="fa-solid fa-floppy-disk"></i> Update Profile</button>
-          </div>
-
-          <div class="glass-panel p-4">
-            <h3><i class="fa-solid fa-heart"></i> Saved Accessible Places</h3>
-            <div class="saved-list">
-              <div class="saved-item">
-                <div>
-                  <strong>Phoenix Marketcity Mall</strong>
-                  <div class="text-muted">Bengaluru &bull; Score: 96/100</div>
-                </div>
-                <button class="btn btn-sm btn-outline" onclick="loadBusinessDetail(1)">View</button>
-              </div>
-              <div class="saved-item">
-                <div>
-                  <strong>AIIMS Multi-Specialty Hospital</strong>
-                  <div class="text-muted">Delhi &bull; Score: 98/100</div>
-                </div>
-                <button class="btn btn-sm btn-outline" onclick="loadBusinessDetail(2)">View</button>
-              </div>
-            </div>
-          </div>
+        <h2><i class="fa-solid fa-user"></i> Accessibility Profile</h2>
+        <div class="glass-panel p-4 mt-3">
+          <p>Primary Need: Wheelchair User (Ramp & Lift Required)</p>
+          <p>Language: English (23 Languages available)</p>
         </div>
       </div>
     </section>
 
   </main>
 
-  <!-- FLOATING AI ASSISTANT CHATBOT WIDGET -->
+  <!-- FLOATING AI CHATBOT -->
   <div id="ai-widget-container" class="ai-widget-container">
-    <!-- Chat Drawer -->
-    <div id="ai-chat-drawer" class="ai-chat-drawer glass-panel" style="display:none;" aria-label="AccessIndia AI Chat Window">
+    <div id="ai-chat-drawer" class="ai-chat-drawer" style="display:none;">
       <div class="chat-header">
-        <div class="chat-header-title">
-          <div class="bot-avatar"><i class="fa-solid fa-robot"></i></div>
-          <div>
-            <strong>AccessIndia AI Assistant</strong>
-            <div class="status-online"><span class="online-dot"></span> Online &bull; 23 Languages</div>
-          </div>
-        </div>
-        <button class="chat-close-btn" onclick="toggleAIChat()" aria-label="Close Assistant"><i class="fa-solid fa-xmark"></i></button>
+        <strong><i class="fa-solid fa-robot"></i> AccessIndia AI Assistant</strong>
+        <button onclick="toggleAIChat()" style="background:none; border:none; color:#fff; font-size:1.2rem; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
       </div>
-
-      <div id="chat-messages" class="chat-messages" aria-live="polite">
+      <div id="chat-messages" class="chat-messages">
         <div class="message bot-msg">
-          <div class="msg-bubble">
-            Namaste! I am your AccessIndia AI Assistant. Ask me about wheelchair ramps, entrance advice, CCTV parking, or step-free routes.
-          </div>
+          <div class="msg-bubble">Namaste! Ask me about wheelchair ramps, entrance recommendations, CCTV parking, or accessible routes.</div>
         </div>
       </div>
-
-      <div class="chat-suggestions" id="chat-suggestions">
-        <button class="suggestion-chip" onclick="sendQuickChatMessage('Which entrance is best for wheelchair?')">Best Entrance?</button>
-        <button class="suggestion-chip" onclick="sendQuickChatMessage('Show CCTV accessible parking')">CCTV Parking?</button>
-        <button class="suggestion-chip" onclick="sendQuickChatMessage('Where is accessible restroom?')">Accessible Restroom?</button>
-      </div>
-
       <div class="chat-input-area">
-        <input type="text" id="chat-user-input" placeholder="Ask AI Assistant..." onkeypress="handleChatKeyPress(event)">
-        <button class="chat-voice-btn" id="btn-chat-voice" onclick="triggerVoiceInput()" aria-label="Voice Input"><i class="fa-solid fa-microphone"></i></button>
-        <button class="btn btn-primary btn-send" onclick="sendChatMessage()"><i class="fa-solid fa-paper-plane"></i></button>
+        <input type="text" id="chat-user-input" placeholder="Ask AI Assistant..." onkeypress="if(event.key==='Enter') sendChatMessage()">
+        <button class="btn btn-primary" onclick="sendChatMessage()"><i class="fa-solid fa-paper-plane"></i></button>
       </div>
     </div>
 
-    <!-- Floating AI Trigger Button -->
-    <button id="ai-widget-trigger" class="ai-widget-trigger" onclick="toggleAIChat()" aria-label="Open AccessIndia AI Assistant">
-      <i class="fa-solid fa-wand-magic-sparkles"></i>
-      <span class="ai-trigger-label">AccessIndia AI</span>
+    <button class="ai-widget-trigger" onclick="toggleAIChat()">
+      <i class="fa-solid fa-wand-magic-sparkles"></i> AccessIndia AI
     </button>
   </div>
 
@@ -623,13 +513,7 @@
     <div class="container footer-container">
       <div>
         <div class="footer-brand"><i class="fa-solid fa-wheelchair-move"></i> AccessIndia AI</div>
-        <p class="footer-desc">Universal Accessibility & Smart Facility Discovery Platform. WCAG 2.2 AA Compliant.</p>
-      </div>
-      <div class="footer-links">
-        <a href="#home" onclick="switchView('home'); return false;">Home</a>
-        <a href="#search" onclick="switchView('search'); return false;">Search</a>
-        <a href="#categories" onclick="switchView('categories'); return false;">Categories</a>
-        <a href="#route" onclick="switchView('route'); return false;">Route Planner</a>
+        <p>Universal Accessibility & Smart Facility Discovery Platform. WCAG 2.2 AA Compliant.</p>
       </div>
     </div>
     <div class="footer-bottom">
@@ -639,9 +523,292 @@
 
   <!-- Leaflet JS for Maps -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
-  <!-- Main Application Script (Bulletproof relative links) -->
-  <script src="js/app.js"></script>
-  <script src="./js/app.js"></script>
-  <script src="app.js"></script>
+
+  <!-- EMBEDDED JAVASCRIPT CONTROLLER -->
+  <script>
+    const mockBusinesses = [
+      {
+        id: 1,
+        name: 'Phoenix Marketcity Mall',
+        category: 'Shopping Malls',
+        description: 'Premier shopping center with step-free entrance, tactile paving, Braille lifts, accessible restrooms, and dedicated EV charging spots.',
+        address: 'Whitefield Main Rd, Devasandra Industrial Estate, Mahadevapura',
+        city: 'Bengaluru',
+        state: 'Karnataka',
+        pincode: '560048',
+        latitude: 12.9959,
+        longitude: 77.6964,
+        phone: '+91 80 6726 6111',
+        opening_hours: '10:00 AM',
+        closing_hours: '10:00 PM',
+        accessibility_score: 96,
+        entrances: [
+          { name: 'North Gate (Main Plaza)', is_recommended: 1, walking_distance_meters: 15, notes: 'Recommended step-free entrance with wide automatic sensor glass doors.' }
+        ],
+        parking: { total_spaces: 450, occupied_spaces: 280, accessible_spaces: 24 },
+        features: [
+          { feature_name: 'Wheelchair Ramp', status: 'GREEN', details: 'Continuous 1:12 slope ramp with dual handrails' },
+          { feature_name: 'Elevator / Lift', status: 'GREEN', details: 'Braille tactile floor indicators & audio' },
+          { feature_name: 'Accessible Restroom', status: 'GREEN', details: 'Grab rails, low basin, automated flush' }
+        ]
+      },
+      {
+        id: 2,
+        name: 'AIIMS Multi-Specialty Hospital',
+        category: 'Hospitals',
+        description: 'National premier medical institute with full accessibility infrastructure, 24x7 emergency response, tactile paths, and audio lifts.',
+        address: 'Sri Aurobindo Marg, Ansari Nagar',
+        city: 'Delhi',
+        state: 'Delhi',
+        pincode: '110029',
+        latitude: 28.5672,
+        longitude: 77.2100,
+        phone: '+91 11 2658 8500',
+        opening_hours: '00:00 AM',
+        closing_hours: '11:59 PM',
+        accessibility_score: 98,
+        entrances: [
+          { name: 'Emergency Block Entrance', is_recommended: 1, walking_distance_meters: 10, notes: 'Zero-step entrance with wheelchairs stationed at gate.' }
+        ],
+        parking: { total_spaces: 600, occupied_spaces: 410, accessible_spaces: 50 },
+        features: [
+          { feature_name: 'Wheelchair Ramp', status: 'GREEN', details: 'Compliant slope' },
+          { feature_name: 'Elevator', status: 'GREEN', details: 'Medical bed capacity' }
+        ]
+      },
+      {
+        id: 3,
+        name: 'Kempegowda International Airport (BLR)',
+        category: 'Airports',
+        description: 'World-class airport terminal with seamless step-free navigation, PRM assistance, buggy service, and tactile maps.',
+        address: 'KIAL Rd, Devanahalli',
+        city: 'Bengaluru',
+        state: 'Karnataka',
+        pincode: '560300',
+        latitude: 13.1986,
+        longitude: 77.7066,
+        phone: '+91 80 6678 5555',
+        opening_hours: '00:00 AM',
+        closing_hours: '11:59 PM',
+        accessibility_score: 99,
+        entrances: [
+          { name: 'Gate 2 - PRM Assistance', is_recommended: 1, walking_distance_meters: 12, notes: 'Dedicated lane for passengers with reduced mobility.' }
+        ],
+        parking: { total_spaces: 1200, occupied_spaces: 820, accessible_spaces: 80 },
+        features: [
+          { feature_name: 'Wheelchair Ramp', status: 'GREEN', details: 'Full terminal step-free' }
+        ]
+      }
+    ];
+
+    const categoriesList = [
+      { name: 'Restaurants', icon: 'fa-utensils', count: '1,240+ Places' },
+      { name: 'Shopping Malls', icon: 'fa-bag-shopping', count: '380+ Malls' },
+      { name: 'Hospitals', icon: 'fa-hospital', count: '850+ Hospitals' },
+      { name: 'Airports', icon: 'fa-plane-departure', count: '45 Terminals' },
+      { name: 'Railway Stations', icon: 'fa-train', count: '210+ Stations' },
+      { name: 'Parks', icon: 'fa-tree', count: '310+ Parks' }
+    ];
+
+    let homeMap = null;
+    let mapMarkers = [];
+
+    document.addEventListener('DOMContentLoaded', () => {
+      initWCAG();
+      initHomeMap();
+      renderHomeList(mockBusinesses);
+      renderCategories();
+    });
+
+    function initWCAG() {
+      document.getElementById('btn-contrast').onclick = () => {
+        const c = document.documentElement.getAttribute('data-contrast') === 'high' ? 'normal' : 'high';
+        document.documentElement.setAttribute('data-contrast', c);
+      };
+      document.getElementById('btn-theme').onclick = () => {
+        const t = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', t);
+      };
+      document.getElementById('btn-font-inc').onclick = () => document.body.className = 'font-xl';
+      document.getElementById('btn-font-dec').onclick = () => document.body.className = '';
+      document.getElementById('btn-font-reset').onclick = () => document.body.className = '';
+      document.getElementById('btn-tts').onclick = () => {
+        if ('speechSynthesis' in window) {
+          const u = new SpeechSynthesisUtterance("AccessIndia AI: Discover 100% accessible places across India.");
+          window.speechSynthesis.speak(u);
+        }
+      };
+    }
+
+    function switchView(vId) {
+      document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active'));
+      document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
+      const target = document.getElementById('view-' + vId);
+      if (target) target.classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function initHomeMap() {
+      const container = document.getElementById('home-map');
+      if (!container) return;
+      homeMap = L.map('home-map').setView([12.9759, 77.6964], 11);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(homeMap);
+      updateMarkers(mockBusinesses);
+    }
+
+    function updateMarkers(places) {
+      if (!homeMap) return;
+      mapMarkers.forEach(m => homeMap.removeLayer(m));
+      mapMarkers = [];
+      const bounds = L.latLngBounds();
+
+      places.forEach(p => {
+        const marker = L.marker([p.latitude, p.longitude]).addTo(homeMap);
+        marker.bindPopup(`<b>${p.name}</b><br>Accessibility Score: ${p.accessibility_score}/100<br><button onclick="loadDetail(${p.id})">View</button>`);
+        bounds.extend([p.latitude, p.longitude]);
+        mapMarkers.push(marker);
+      });
+
+      if (places.length > 0) homeMap.fitBounds(bounds, { padding: [30, 30] });
+    }
+
+    function renderHomeList(places) {
+      const container = document.getElementById('home-places-list');
+      document.getElementById('places-count').innerText = places.length;
+      container.innerHTML = places.map(p => `
+        <div class="place-card glass-panel" onclick="loadDetail(${p.id})">
+          <div class="place-card-header">
+            <strong>${p.name}</strong>
+            <span class="score-badge green">${p.accessibility_score}/100</span>
+          </div>
+          <small class="text-muted">${p.category} &bull; ${p.city}</small>
+        </div>
+      `).join('');
+    }
+
+    function filterHomeCity(city) {
+      const filtered = city ? mockBusinesses.filter(b => b.city.toLowerCase() === city.toLowerCase()) : mockBusinesses;
+      renderHomeList(filtered);
+      updateMarkers(filtered);
+    }
+
+    function handleHeroSearch() {
+      const q = document.getElementById('hero-search-input').value.toLowerCase();
+      switchView('search');
+      const filtered = mockBusinesses.filter(b => b.name.toLowerCase().includes(q) || b.category.toLowerCase().includes(q) || b.city.toLowerCase().includes(q));
+      renderSearchGrid(filtered);
+    }
+
+    function quickSearchCategory(cat) {
+      document.getElementById('hero-search-input').value = cat;
+      handleHeroSearch();
+    }
+
+    function renderCategories() {
+      const container = document.getElementById('categories-grid');
+      container.innerHTML = categoriesList.map(c => `
+        <div class="cat-card glass-panel" onclick="searchCat('${c.name}')">
+          <div class="cat-icon"><i class="fa-solid ${c.icon}"></i></div>
+          <h3>${c.name}</h3>
+          <small>${c.count}</small>
+        </div>
+      `).join('');
+    }
+
+    function searchCat(cat) {
+      switchView('search');
+      document.getElementById('filter-category').value = cat;
+      const filtered = mockBusinesses.filter(b => b.category.toLowerCase() === cat.toLowerCase());
+      renderSearchGrid(filtered);
+    }
+
+    function applyAdvancedFilters() {
+      const city = document.getElementById('filter-city').value;
+      const cat = document.getElementById('filter-category').value;
+      let filtered = mockBusinesses;
+      if (city) filtered = filtered.filter(b => b.city.toLowerCase() === city.toLowerCase());
+      if (cat) filtered = filtered.filter(b => b.category.toLowerCase() === cat.toLowerCase());
+      renderSearchGrid(filtered);
+    }
+
+    function renderSearchGrid(places) {
+      const container = document.getElementById('search-results-grid');
+      document.getElementById('results-summary').innerText = `Showing ${places.length} places`;
+      container.innerHTML = places.map(p => `
+        <div class="place-card glass-panel" onclick="loadDetail(${p.id})">
+          <h4>${p.name}</h4>
+          <p>${p.address}</p>
+          <button class="btn btn-sm btn-primary mt-2">View Profile</button>
+        </div>
+      `).join('');
+    }
+
+    function loadDetail(id) {
+      const b = mockBusinesses.find(item => item.id === id);
+      if (!b) return;
+      const container = document.getElementById('detail-content');
+      const recEnt = b.entrances[0] || { name: 'Main Gate', notes: 'Ramp and automatic door available.' };
+
+      container.innerHTML = `
+        <div class="glass-panel p-4 mb-4">
+          <h1>${b.name}</h1>
+          <p>${b.address}, ${b.city}</p>
+          <div class="score-badge green" style="display:inline-block; font-size:1.2rem; margin-top:0.5rem;">Score: ${b.accessibility_score} / 100</div>
+        </div>
+
+        <div class="smart-entrance-card mb-4">
+          <h3><i class="fa-solid fa-door-open"></i> Recommended Entrance: ${recEnt.name}</h3>
+          <p>${recEnt.notes}</p>
+        </div>
+
+        <div class="glass-panel p-4 mb-4">
+          <h3>22 Accessibility Features Matrix</h3>
+          <ul>
+            ${b.features.map(f => `<li><strong>${f.feature_name}:</strong> ${f.details}</li>`).join('')}
+          </ul>
+        </div>
+      `;
+      switchView('detail');
+    }
+
+    function calculateAccessibleRoute() {
+      const box = document.getElementById('route-summary-box');
+      box.style.display = 'block';
+      box.innerHTML = `
+        <h4 style="color:var(--status-green);">Step-Free Route Calculated!</h4>
+        <p>1. Exit Concourse via Step-Free Ramp</p>
+        <p>2. Follow Tactile Path to Elevator E-1</p>
+      `;
+    }
+
+    function switchOwnerTab(tab) {
+      document.querySelectorAll('.dash-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.dash-panel').forEach(p => p.classList.remove('active'));
+      event.target.classList.add('active');
+      document.getElementById('owner-tab-' + tab).classList.add('active');
+    }
+
+    function toggleAIChat() {
+      const drawer = document.getElementById('ai-chat-drawer');
+      drawer.style.display = drawer.style.display === 'none' ? 'flex' : 'none';
+    }
+
+    function sendChatMessage() {
+      const input = document.getElementById('chat-user-input');
+      const txt = input.value.trim();
+      if (!txt) return;
+
+      const box = document.getElementById('chat-messages');
+      box.innerHTML += `<div class="message user-msg"><div class="msg-bubble">${txt}</div></div>`;
+      input.value = '';
+
+      setTimeout(() => {
+        let reply = 'AccessIndia AI Assistant: North Gate Ramp is the recommended step-free entrance for wheelchair users.';
+        if (txt.toLowerCase().includes('hospital')) reply = 'AIIMS Delhi Trauma Block has a zero-step entrance with wheelchairs stationed at the gate.';
+        box.innerHTML += `<div class="message bot-msg"><div class="msg-bubble">${reply}</div></div>`;
+        box.scrollTop = box.scrollHeight;
+      }, 500);
+    }
+  </script>
 </body>
 </html>
